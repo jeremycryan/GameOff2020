@@ -2,9 +2,9 @@
 
 import pygame
 
-import primitives as p
+from primitives import GameObject
 
-class Scene(p.GameObject):
+class Scene(GameObject):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.is_running = True
@@ -14,7 +14,7 @@ class Scene(p.GameObject):
             dt, events = self.game.update_globals()
             self.update(dt, events)
             self.draw(self.game.screen)
-            pygame.display.flip()
+            self.game.update_screen()
 
     def next_scene(self):
         raise NotImplementedError()

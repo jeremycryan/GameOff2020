@@ -15,6 +15,7 @@ class StartScene(Scene):
     def update(self, dt, events):
         self.age += dt
         if self.age > 2:
+            raise ValueError("oh no")
             self.is_running = False
 
     def draw(self, surf, offset=(0, 0)):

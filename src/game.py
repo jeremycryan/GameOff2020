@@ -37,6 +37,14 @@ class Game:
         pygame.quit()
         sys.exit()
 
+    def update_screen(self):
+        """ Update the pygame display.
+
+            This can also be used as a hook to add game-wide
+            display objects, like an FPS monitor.
+        """
+        pygame.display.flip()
+
     def main(self):
         while True:
             self.current_scene.main()
