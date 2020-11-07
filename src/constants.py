@@ -1,0 +1,20 @@
+##!/usr/bin/env python3
+
+import os
+
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 720
+WINDOW_SIZE = WINDOW_WIDTH, WINDOW_HEIGHT
+
+MAX_FPS = 60
+
+BLACK = 0, 0, 0
+WHITE = 255, 255, 255
+RED = 255, 0, 0
+GREEN = 0, 255, 0
+BLUE = 0, 0, 255
+YELLOW = 255, 255, 0
+CYAN = 0, 255, 255
+MAGENTA = 255, 0, 255
+
+LOG_PATH = "error_log.txt"
