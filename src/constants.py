@@ -17,4 +17,8 @@ YELLOW = 255, 255, 0
 CYAN = 0, 255, 255
 MAGENTA = 255, 0, 255
 
+COMMANDS = {"thrust":'t', "delay":'d', "rotate":'r'}
+COMMANDS_MIN = {'t':(0,), 'd':(0,), 'r':(-360,)}
+COMMANDS_MAX = {'t':(100,), 'd':(60000,), 'r':(360,)}
+
 LOG_PATH = "error_log.txt"
