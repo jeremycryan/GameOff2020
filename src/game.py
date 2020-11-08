@@ -14,6 +14,7 @@ class Game:
         self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.current_scene = StartScene(self)
+        self.stream = Stream(channel="TwitchPlaysPokemon")
         self.main()
 
     def update_globals(self):
