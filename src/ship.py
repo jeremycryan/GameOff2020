@@ -2,7 +2,7 @@
 
 import pygame
 import constants as c
-from primitives import PhysicsObject
+from primitives import PhysicsObject, Pose
 from player import Player
 
 class Ship(PhysicsObject):
@@ -12,6 +12,7 @@ class Ship(PhysicsObject):
         self.program = self.parse_program(program_string)
         self.player = player
         self.age = 0
+        self.thrust = Pose((0,0), 0)
         self.commandIndex = 0
         self.delay = 0
 
@@ -21,16 +22,20 @@ class Ship(PhysicsObject):
         if self.delay > 0:
             self.delay = max(0, self.delay-dt)
         self.runCommands(dt)
+        self.acceleration.clear()
+        self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
+        print(self.thrust.x, self.thrust.y)
+
 
     def runCommands(self, dt):
         while self.delay <= 0 and self.commandIndex < len(self.program):
-            if self.command[i][0] == 'd': # delay
-                self.delay += self.command[i][1]
-            if self.command[i][0] == 't': # thrust
-                thrust = self.pose.get_unit_vector()*self.command[i][1]
-                self.acceleration.add_pose(thrust*THRUST, dt)
-            if self.command[i][0] == 'r': # rotate
-                self.velocity.set_angle(self.command[i][1])
+            command = self.program[self.commandIndex]
+            if command[0] == 'd': # delay
+                self.delay += command[1]/1000
+            if command[0] == 't': # thrust
+                self.thrust = Pose((command[1]*c.THRUST, 0), 0)
+            if command[0] == 'r': # rotate
+                self.velocity.set_angle(command[1])
             self.commandIndex += 1
 
     def draw(self, surface, offset=(0, 0)):
@@ -59,7 +64,7 @@ class Ship(PhysicsObject):
                 number += char
             elif char.isalnum():
                 # terminate previous number
-                if number[1:].isnumeric() and \
+                if (len(number) == 1 or number[1:].isnumeric()) and \
                 (number[0].isdigit() or number[0] == '-'):
                     arguments.append(int(number))
                     number = ''
@@ -103,4 +108,4 @@ class Ship(PhysicsObject):
         return program
 
 if __name__ == '__main__':
-    Ship.parse_program("t10d20t0r90")
+    Ship.parse_program("t100 r9 d1000 t1")
