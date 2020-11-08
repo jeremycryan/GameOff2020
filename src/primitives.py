@@ -35,6 +35,9 @@ class Pose:
     def set_angle(self, angle):
         self.angle = angle
 
+    def get_position(self):
+        return self.x, self.y
+
     def get_angle_radians(self):
         return self.angle*math.pi/180
 
@@ -61,13 +64,39 @@ class Pose:
         self.add_position(other.get_weighted_position(other_weight))
         self.add_angle(other.angle*other_weight)
 
+    def distance_to(self, other):
+        return self.magnitude(self - other)
+
+    def magnitude(self):
+        distance = math.sqrt(x**2 + y**2)
+        return distance
+
     def clear(self):
         self.x = 0
         self.y = 0
         self.angle = 0
 
+    def copy(self):
+        return Pose(self.get_position(), self.angle)
+
+    def scale_to(self, magnitude):
+        """ Scale the X and Y components of the Pose to have a particular
+            magnitude. Angle is unchanged.
+        """
+        normal = self.get_unit_vector()
+        my_magnitude = self.magnitude()
+        self.x = normal[0] * magnitude / my_magnitude
+        self.y = normal[1] * magnitude / my_magnitude
+
     def __add__(self, other):
-        self.add_pose(other)
+        copy = self.copy()
+        copy.add_pose(other)
+        return copy
+
+    def __sub__(self, other):
+        copy = self.copy()
+        copy.add_pose(other, weight=-1)
+        return copy
 
 
 class PhysicsObject(GameObject):

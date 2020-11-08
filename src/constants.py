@@ -18,3 +18,5 @@ CYAN = 0, 255, 255
 MAGENTA = 255, 0, 255
 
 LOG_PATH = "error_log.txt"
+
+GRAVITY_CONSTANT = 1
