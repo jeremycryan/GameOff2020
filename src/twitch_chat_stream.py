@@ -76,3 +76,10 @@ class Stream:
             result = tuple(self._queue)
             self._queue = []
         return result
+
+
+if __name__ == '__main__':
+    stream = Stream(channel="twitchplayspokemon")
+    while True:
+        for message in stream.queue_flush():
+            print(f"{message.user} says '{message.text}'!")
