@@ -24,10 +24,10 @@ class Pose:
         self.angle = angle
 
     def set_x(self, new_x):
-        self.x = x
+        self.x = new_x
 
     def set_y(self, new_y):
-        self.y = y
+        self.y = new_y
 
     def set_position(self, position):
         self.x, self.y = position
@@ -61,8 +61,8 @@ class Pose:
         self.set_angle(self.angle + angle)
 
     def add_pose(self, other, weight=1):
-        self.add_position(other.get_weighted_position(other_weight))
-        self.add_angle(other.angle*other_weight)
+        self.add_position(other.get_weighted_position(weight))
+        self.add_angle(other.angle*weight)
 
     def distance_to(self, other):
         return self.magnitude(self - other)
