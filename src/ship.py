@@ -18,17 +18,18 @@ class Ship(PhysicsObject):
         self.age += dt
         if self.delay > 0:
             self.delay = max(0, self.delay-dt)
+        self.runCommands(dt)
+
+    def runCommands(self, dt):
         while self.delay <= 0 and self.commandIndex < len(self.program):
             if self.command[i][0] == 'd': # delay
                 self.delay += self.command[i][1]
             if self.command[i][0] == 't': # thrust
-                # self.acceleration[0] += self.command[i][1]
+                thrust = self.pose.get_unit_vector()*self.command[i][1]
+                self.acceleration.add_pose(thrust*THRUST, dt)
             if self.command[i][0] == 'r': # rotate
-                self.velocity[2] = self.command[i][1]
+                self.velocity.set_angle(self.command[i][1])
             self.commandIndex += 1
-
-
-
 
     def draw(self, surface, offset=(0, 0)):
         pass
@@ -95,4 +96,4 @@ class Ship(PhysicsObject):
         return program
 
 if __name__ == '__main__':
-    Ship.parse_program("Thrust;100 ; d20 r-10")
+    Ship.parse_program("t10d20t0r90")

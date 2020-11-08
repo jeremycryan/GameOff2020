@@ -20,6 +20,7 @@ MAGENTA = 255, 0, 255
 COMMANDS = {"thrust":'t', "delay":'d', "rotate":'r'}
 COMMANDS_MIN = {'t':(0,), 'd':(0,), 'r':(-360,)}
 COMMANDS_MAX = {'t':(100,), 'd':(60000,), 'r':(360,)}
+THRUST = 1
 
 LOG_PATH = "error_log.txt"
 
