@@ -7,13 +7,15 @@ import pygame
 import constants as c
 from error_logging import error_logging
 from start_scene import StartScene
+from twitch_chat_stream import Stream
+from level_scene import LevelScene
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
-        self.current_scene = StartScene(self)
+        self.current_scene = LevelScene(self)
         self.stream = Stream(channel="TwitchPlaysPokemon")
         self.main()
 
