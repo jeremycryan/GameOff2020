@@ -10,8 +10,12 @@ class Planet(PhysicsObject):
         super().__init__(game, position, angle)
         self.velocity.angle = 15
         self.radius = radius
-        self.gravity_radius = gravity_radius if gravity_radius is not None else 2*radius
+        self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
         self.mass = mass if mass is not None else radius**2
+
+    def is_moon(self):
+        """ Planets aren't moons, silly. """
+        return False
 
     def get_impulse(self, ship, dt):
         """ Return a Pose indicating the change in acceleration to apply to
