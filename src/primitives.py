@@ -45,8 +45,8 @@ class Pose:
         """ Return the unit vector equivalent of the Pose's angle """
         # Note: y component is inverted because of indexing on displays;
         #       negative y points up, while positive y points down.
-        unit_x = angle*math.cos(self.get_angle_radians())
-        unit_y = -angle*math.sin(self.get_angle_radians())
+        unit_x = math.cos(self.get_angle_radians())
+        unit_y = -math.sin(self.get_angle_radians())
         return unit_x, unit_y
 
     def get_weighted_position(self, weight):
@@ -60,7 +60,17 @@ class Pose:
     def add_angle(self, angle):
         self.set_angle(self.angle + angle)
 
-    def add_pose(self, other, weight=1):
+    def rotate_position(self, angle):
+        x = self.x*math.cos(angle*math.pi/180) \
+            + self.y*math.sin(angle*math.pi/180)
+        y = -self.x*math.sin(angle*math.pi/180) \
+            + self.y*math.cos(angle*math.pi/180)
+        self.set_position((x, y))
+
+    def add_pose(self, other, weight=1, frame=None):
+        if frame:
+            other = other.copy()
+            other.rotate_position(frame.angle)
         self.add_position(other.get_weighted_position(weight))
         self.add_angle(other.angle*weight)
 
