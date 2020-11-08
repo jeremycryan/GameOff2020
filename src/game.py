@@ -9,14 +9,16 @@ from error_logging import error_logging
 from start_scene import StartScene
 from twitch_chat_stream import Stream
 from level_scene import LevelScene
+from player import Player
 
 class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
-        self.current_scene = LevelScene(self)
         self.stream = Stream(channel="TwitchPlaysPokemon")
+        self.players = {name:Player(name) for name in ["Paul", "Jeremy"]}
+        self.current_scene = LevelScene(self)
         self.main()
 
     def update_globals(self):
