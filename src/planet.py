@@ -21,7 +21,10 @@ class Planet(PhysicsObject):
         """ Return a Pose indicating the acceleration to apply to
             the Ship.
         """
-        gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / (self.pose.distance_to(ship.pose))**2
+        distance = self.pose.distance_to(ship.pose)
+        if distance > self.gravity_radius:
+            return Pose((0, 0), 0)
+        gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / distance**2
         gravity_vector = (self.pose - ship.pose)
         gravity_vector.set_angle(0)
         gravity_vector.scale_to(gravity_magnitude)
