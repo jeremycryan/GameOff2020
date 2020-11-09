@@ -13,12 +13,14 @@ class Planet(PhysicsObject):
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2*radius
         self.mass = mass if mass is not None else radius**2
 
-    def get_impulse(self, ship, dt):
-        """ Return a Pose indicating the change in acceleration to apply to
-            the Ship over a period of time dt.
+    def get_acceleration(self, ship):
+        """ Return a Pose indicating the acceleration to apply to
+            the Ship.
         """
         gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / (self.pose.distance_to(ship.pose))**2
-        gravity_vector = (self.pose - ship.pose).scale_to(gravity_vector*dt)
+        gravity_vector = (self.pose - ship.pose)
+        gravity_vector.set_angle(0)
+        gravity_vector.scale_to(gravity_magnitude)
         return gravity_vector
 
     def update(self, dt, events):
