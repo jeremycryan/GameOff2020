@@ -75,10 +75,10 @@ class Pose:
         self.add_angle(other.angle*weight)
 
     def distance_to(self, other):
-        return self.magnitude(self - other)
+        return (self - other).magnitude()
 
     def magnitude(self):
-        distance = math.sqrt(x**2 + y**2)
+        distance = math.sqrt(self.x**2 + self.y**2)
         return distance
 
     def clear(self):
@@ -93,10 +93,9 @@ class Pose:
         """ Scale the X and Y components of the Pose to have a particular
             magnitude. Angle is unchanged.
         """
-        normal = self.get_unit_vector()
         my_magnitude = self.magnitude()
-        self.x = normal[0] * magnitude / my_magnitude
-        self.y = normal[1] * magnitude / my_magnitude
+        self.x *= magnitude / my_magnitude
+        self.y *= magnitude / my_magnitude
 
     def __add__(self, other):
         copy = self.copy()

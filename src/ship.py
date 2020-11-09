@@ -24,6 +24,8 @@ class Ship(PhysicsObject):
         self.runCommands(dt)
         self.acceleration.clear()
         self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
+        for planet in self.game.current_scene.planets:
+            self.acceleration.add_pose(planet.get_acceleration(self))
 
     def runCommands(self, dt):
         while self.delay <= 0 and self.commandIndex < len(self.program):
