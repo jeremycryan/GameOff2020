@@ -15,6 +15,7 @@ class Ship(PhysicsObject):
         self.thrust = Pose((0,0), 0)
         self.commandIndex = 0
         self.delay = 0
+        self.destroyed = False
 
     def update(self, dt, events):
         super().update(dt, events)
