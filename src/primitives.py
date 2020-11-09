@@ -108,6 +108,12 @@ class Pose:
         copy.add_pose(other, weight=-1)
         return copy
 
+    def __str__(self):
+        return f"<Pose x:{self.x} y:{self.y} angle:{self.angle}>"
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class PhysicsObject(GameObject):
     def __init__(self, game, position, angle):

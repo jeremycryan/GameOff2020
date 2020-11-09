@@ -3,6 +3,7 @@
 import constants as c
 from scene import Scene
 from planet import Planet
+from moon import Moon
 from ship import Ship
 from primitives import Pose
 
@@ -10,7 +11,8 @@ class LevelScene(Scene):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.planets = [Planet(self.game, (200, 200), 0),
-                        Planet(self.game, (500, 500), 0, 50, 100)]
+                        Planet(self.game, (500, 500), 0, 50),
+                        Moon(self.game, (800, 300))]
         self.ships = [Ship(self.game, "r90 d1000 r0 t100 d1000 t0", self.game.players["Paul"], (500, 200), 180)]
 
     def update(self, dt, events):

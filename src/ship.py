@@ -24,8 +24,6 @@ class Ship(PhysicsObject):
         self.runCommands(dt)
         self.acceleration.clear()
         self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
-        print(self.thrust.x, self.thrust.y)
-
 
     def runCommands(self, dt):
         while self.delay <= 0 and self.commandIndex < len(self.program):
@@ -39,7 +37,9 @@ class Ship(PhysicsObject):
             self.commandIndex += 1
 
     def draw(self, surface, offset=(0, 0)):
-        ship_surf = pygame.Surface((60, 30))
+        ship_surf = pygame.Surface((60, 30)).convert()
+        ship_surf.fill(c.BLACK)
+        ship_surf.set_colorkey(c.BLACK)
         pygame.draw.rect(ship_surf, self.player.color, (15, 0, 30, 30))
         pygame.draw.circle(ship_surf, self.player.color, (45, 15), 15)
         ship_surf = pygame.transform.rotate(ship_surf, self.pose.angle)
@@ -104,7 +104,6 @@ class Ship(PhysicsObject):
             else:
                 print("Invalid character")
                 return []
-        print(program)
         return program
 
 if __name__ == '__main__':
