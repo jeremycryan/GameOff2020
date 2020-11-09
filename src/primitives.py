@@ -107,6 +107,13 @@ class Pose:
         copy.add_pose(other, weight=-1)
         return copy
 
+    def __mul__(self, other):
+        copy = self.copy()
+        copy.x *= other
+        copy.y *= other
+        copy.angle *= other
+        return copy
+
     def __str__(self):
         return f"<Pose x:{self.x} y:{self.y} angle:{self.angle}>"
 
