@@ -64,10 +64,10 @@ class Wormhole(PhysicsObject):
         x += offset[0]
         y += offset[1]
         pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
-        pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
+        pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
 
         x, y = self.pose2.get_position()
         x += offset[0]
         y += offset[1]
         pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
-        pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
+        pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)

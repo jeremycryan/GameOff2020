@@ -2,6 +2,7 @@
 
 import pygame
 
+import constants as c
 from primitives import GameObject
 
 class Scene(GameObject):
@@ -10,9 +11,13 @@ class Scene(GameObject):
         self.is_running = True
 
     def main(self):
+        lag = 0
         while self.is_running:
             dt, events = self.game.update_globals()
-            self.update(dt, events)
+            lag += dt
+            while lag > c.TICK_LENGTH:
+                lag -= c.TICK_LENGTH
+                self.update(c.TICK_LENGTH, events)
             self.draw(self.game.screen)
             self.game.update_screen()
 
