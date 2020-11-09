@@ -122,5 +122,5 @@ class PhysicsObject(GameObject):
         self.acceleration = Pose(position=(0, 0), angle=0)
 
     def update(self, dt, events):
-        self.pose.add_pose(self.velocity, weight=dt)
         self.velocity.add_pose(self.acceleration, weight=dt)
+        self.pose.add_pose(self.velocity, weight=dt)

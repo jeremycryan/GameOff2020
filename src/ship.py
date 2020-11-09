@@ -17,6 +17,9 @@ class Ship(PhysicsObject):
         self.delay = 0
         self.destroyed = False
 
+    def destroy(self):
+        self.destroyed = True
+
     def update(self, dt, events):
         super().update(dt, events)
         self.age += dt

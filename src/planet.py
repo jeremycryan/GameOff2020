@@ -24,6 +24,8 @@ class Planet(PhysicsObject):
         distance = self.pose.distance_to(ship.pose)
         if distance > self.gravity_radius:
             return Pose((0, 0), 0)
+        if distance < self.radius:
+            ship.destroy()
         gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / distance**2
         gravity_vector = (self.pose - ship.pose)
         gravity_vector.set_angle(0)
