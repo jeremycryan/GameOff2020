@@ -6,7 +6,8 @@ from planet import Planet
 
 class Moon(Planet):
     def __init__(self, game, position):
-        super().__init__(game, position, 0, radius=50)
+        super().__init__(game, position, 0, radius=30)
+        self.mass *= 2
 
     def is_moon(self):
         return True
