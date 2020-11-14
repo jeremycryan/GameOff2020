@@ -43,11 +43,12 @@ class Ship(PhysicsObject):
             self.commandIndex += 1
 
     def draw(self, surface, offset=(0, 0)):
-        ship_surf = pygame.Surface((60, 30)).convert()
+        w = int(30*c.SHIP_SCALE)
+        ship_surf = pygame.Surface((2*w, w)).convert()
         ship_surf.fill(c.BLACK)
         ship_surf.set_colorkey(c.BLACK)
-        pygame.draw.rect(ship_surf, self.player.color, (15, 0, 30, 30))
-        pygame.draw.circle(ship_surf, self.player.color, (45, 15), 15)
+        pygame.draw.rect(ship_surf, self.player.color, (w//2, 0, w, w))
+        pygame.draw.circle(ship_surf, self.player.color, (w*3//2, w//2), w//2)
         ship_surf = pygame.transform.rotate(ship_surf, self.pose.angle)
         x = self.pose.x + offset[0] - ship_surf.get_width()//2
         y = self.pose.y + offset[1] - ship_surf.get_height()//2

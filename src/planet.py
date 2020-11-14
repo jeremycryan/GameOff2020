@@ -11,7 +11,7 @@ class Planet(PhysicsObject):
         self.velocity.angle = 15
         self.radius = radius
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
-        self.mass = mass if mass is not None else radius**2
+        self.mass = mass if mass is not None else radius*100
 
     def is_moon(self):
         """ Planets aren't moons, silly. """

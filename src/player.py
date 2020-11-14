@@ -3,7 +3,7 @@
 import random
 
 class Player:
-    def __init__(self, name, color=None):
+    def __init__(self, game, name, color=None):
         self.name = name
         self.color = color if color is not None else self.random_color()
 

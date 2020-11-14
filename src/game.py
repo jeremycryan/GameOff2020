@@ -14,10 +14,10 @@ from player import Player
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
+        self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
         self.clock = pygame.time.Clock()
         self.stream = Stream(channel="TwitchPlaysPokemon")
-        self.players = {name:Player(name) for name in ["Paul", "Jeremy"]}
+        self.players = {name:Player(self, name) for name in ["Paul", "Jeremy"]}
         self.current_scene = LevelScene(self)
         self.main()
 
