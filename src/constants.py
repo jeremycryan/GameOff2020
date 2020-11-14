@@ -24,5 +24,6 @@ COMMANDS_MAX = {'t':(100,), 'd':(60000,), 'r':(360,)}
 THRUST = 2
 
 LOG_PATH = "error_log.txt"
+SCORE_SAVE_PATH = "../data"
 
 GRAVITY_CONSTANT = 600

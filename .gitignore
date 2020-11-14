@@ -9,6 +9,9 @@ __pycache__/
 # Error logging
 src/error_log.txt
 
+# Test scores
+data/test_scores.pkl
+
 # Distribution / packaging
 .Python
 build/
