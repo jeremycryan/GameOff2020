@@ -41,5 +41,6 @@ THRUST = 2
 LOG_PATH = "error_log.txt"
 SCORE_SAVE_PATH = "../data"
 IMAGE_PATH = "../images"
+FONT_PATH = "../fonts"
 
 GRAVITY_CONSTANT = 600

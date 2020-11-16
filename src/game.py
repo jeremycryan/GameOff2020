@@ -20,7 +20,8 @@ class Game:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         self.stream = Stream(channel="TwitchPlaysPokemon")
-        self.players = {name:Player(self, name) for name in ["Paul", "Jeremy"]}
+        self.players = {name:Player(self, name) for name in ["PlasmaStarfish", "superduperpacman42"]}
+        self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
         self.current_scene = LevelScene(self)
         self.main()
 

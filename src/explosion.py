@@ -27,9 +27,10 @@ class Explosion(Particle):
         surf = pygame.Surface((radius*2, radius*2))
         surf.fill(c.BLACK)
         surf.set_colorkey(c.BLACK)
-        r = 255 - self.through(loading=2) * (255 - self.ship.player.color[0])
-        g = 255 - self.through(loading=2) * (255 - self.ship.player.color[1])
-        b = 255 - self.through(loading=2) * (255 - self.ship.player.color[2])
+        r = 255 - self.through(loading=2.5) * (255 - self.ship.player.color[0])
+        g = 255 - self.through(loading=2.5) * (255 - self.ship.player.color[1])
+        b = 255 - self.through(loading=2.5) * (255 - self.ship.player.color[2])
+
         pygame.draw.circle(surf, (r, g, b), (radius, radius), radius)
         x = self.pose.x - offset[0] - surf.get_width()//2
         y = self.pose.y - offset[1] - surf.get_height()//2

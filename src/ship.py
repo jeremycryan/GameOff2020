@@ -21,6 +21,18 @@ class Ship(PhysicsObject):
         self.surface = self.get_surface()
         self.since_exhaust = 0
         self.radius = 10
+        self.label = self.game.player_label_font.render(self.player.name,
+                                                        0,
+                                                        self.player.color)
+        self.label_back = pygame.Surface((self.label.get_width() + 10,
+                                          self.label.get_height() + 10))
+        self.label_back.fill(c.BLACK)
+        self.label_back.set_alpha(100)
+        self.label_offset = Pose((0, -35), 0)
+        self.label_pose = self.pose - self.label_offset
+
+        self.scale = 0
+        self.target_scale = 1
 
     def get_surface(self):
         surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()
@@ -51,6 +63,22 @@ class Ship(PhysicsObject):
         for planet in self.game.current_scene.planets:
             self.acceleration.add_pose(planet.get_acceleration(self))
 
+        ds = self.target_scale - self.scale
+        if ds < 0.01:
+            self.scale = self.target_scale
+        self.scale += ds * dt * 8
+
+        if self.pose.y < 120:
+            self.label_offset = Pose((0, 35), 0)
+        if self.pose.y > 150:
+            self.label_offset = Pose((0, -35), 0)
+        dl = self.pose - (self.label_pose - self.label_offset)
+        self.label_pose += dl * dt * 12
+
+        if self.pose.x < 0 or self.pose.x > c.LEVEL_WIDTH or \
+            self.pose.y < 0 or self.pose.y > c.LEVEL_HEIGHT:
+            self.destroy()
+
     def runCommands(self, dt):
         while self.delay <= 0 and self.commandIndex < len(self.program):
             command = self.program[self.commandIndex]
@@ -63,13 +91,29 @@ class Ship(PhysicsObject):
             self.commandIndex += 1
 
     def draw(self, surface, offset=(0, 0)):
-        # w = int(30*c.SHIP_SCALE)
-        # ship_surf = pygame.Surface((2*w, w)).convert()
-        # ship_surf.fill(c.BLACK)
-        # ship_surf.set_colorkey(c.BLACK)
-        # pygame.draw.rect(ship_surf, self.player.color, (w//2, 0, w, w))
-        # pygame.draw.circle(ship_surf, self.player.color, (w*3//2, w//2), w//2)
-        ship_surf = pygame.transform.rotate(self.surface, self.pose.angle)
+        if self.destroyed:
+            return
+
+        if self.label_pose.x < self.label_back.get_width()//2 + 10:
+            self.label_pose.x = self.label_back.get_width()//2 + 10
+        if self.label_pose.x > c.LEVEL_WIDTH - self.label_back.get_width()//2 - 10:
+            self.label_pose.x = c.LEVEL_WIDTH - self.label_back.get_width()//2 - 10
+
+        x = self.label_pose.x + offset[0] - self.label_back.get_width()//2
+        y = self.label_pose.y + offset[1] - self.label_back.get_height()//2
+        surface.blit(self.label_back, (x, y))
+
+        x = self.label_pose.x + offset[0] - self.label.get_width()//2
+        y = self.label_pose.y + offset[1] - self.label.get_height()//2
+        surface.blit(self.label, (x, y))
+
+        if self.scale == 0:
+            return
+
+        ship_surf = pygame.transform.scale(self.surface,
+                                           (int(self.surface.get_width() * self.scale),
+                                           int(self.surface.get_height() * self.scale)))
+        ship_surf = pygame.transform.rotate(ship_surf, self.pose.angle)
         x = self.pose.x + offset[0] - ship_surf.get_width()//2
         y = self.pose.y + offset[1] - ship_surf.get_height()//2
         surface.blit(ship_surf, (x, y))

@@ -19,8 +19,8 @@ class LevelScene(Scene):
                         Planet(self.game, (500, 500), radius=50),
                         Moon(self.game, (800, 300)),
                         Wormhole(self.game, (675, 500), (600, 250))]
-        self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["Paul"], (500, 200), 180),
-                      Ship(self.game, "t100 r180", self.game.players["Jeremy"], (500, 200), 180)]
+        self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["PlasmaStarfish"], (500, 200), 180),
+                      Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
         self.alignment = c.LEFT, c.DOWN
         self.offset = self.get_initial_offset()

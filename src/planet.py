@@ -18,7 +18,10 @@ class Planet(PhysicsObject):
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
         self.mass = mass if mass is not None else radius*100
 
-        self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
+        if self.radius > 50:
+            self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
+        else:
+            self.surface = pygame.image.load(c.IMAGE_PATH + "/small_planet.png")
         self.surface = pygame.transform.scale(self.surface, (radius*2, radius*2))
         self.shadow = pygame.image.load(c.IMAGE_PATH + "/planet_shadow.png")
         self.shadow = pygame.transform.scale(self.shadow,
@@ -54,6 +57,7 @@ class Planet(PhysicsObject):
         y += offset[1]
         surf.blit(my_surface, (x - my_surface.get_width()//2, y - my_surface.get_height()//2))
         surf.blit(self.shadow, (x - self.shadow.get_width()//2, y - self.shadow.get_height()//2))
+        pygame.draw.circle(surf, c.BLACK, (x, y), self.radius+2, width=2)
         self.draw_gravity_region(surf, offset)
         # pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
 
