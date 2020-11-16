@@ -4,6 +4,8 @@ import pygame
 import constants as c
 from primitives import PhysicsObject, Pose
 from player import Player
+from exhaust_particle import ExhaustParticle
+from explosion import Explosion
 
 class Ship(PhysicsObject):
     def __init__(self, game, program_string, player, position=(0, 0), angle=90):
@@ -16,13 +18,31 @@ class Ship(PhysicsObject):
         self.commandIndex = 0
         self.delay = 0
         self.destroyed = False
+        self.surface = self.get_surface()
+        self.since_exhaust = 0
+        self.radius = 10
+
+    def get_surface(self):
+        surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()
+        color_surf = pygame.Surface((surface.get_width(), surface.get_height()))
+        color_surf.fill(self.player.color)
+        surface.blit(color_surf, (0, 0), special_flags=pygame.BLEND_MULT)
+        surface.set_colorkey(surface.get_at((surface.get_width()-1, surface.get_height()-1)))
+        return surface
 
     def destroy(self):
         self.destroyed = True
+        self.game.current_scene.particles.add(Explosion(self.game, self))
+        self.game.current_scene.shake()
 
     def update(self, dt, events):
         super().update(dt, events)
         self.age += dt
+        self.since_exhaust += dt
+        exhaust_period = 0.05
+        if self.since_exhaust > exhaust_period:
+            self.since_exhaust -= exhaust_period
+            self.game.current_scene.particles.add(ExhaustParticle(self.game, self))
         if self.delay > 0:
             self.delay = max(0, self.delay-dt)
         self.runCommands(dt)
@@ -43,13 +63,13 @@ class Ship(PhysicsObject):
             self.commandIndex += 1
 
     def draw(self, surface, offset=(0, 0)):
-        w = int(30*c.SHIP_SCALE)
-        ship_surf = pygame.Surface((2*w, w)).convert()
-        ship_surf.fill(c.BLACK)
-        ship_surf.set_colorkey(c.BLACK)
-        pygame.draw.rect(ship_surf, self.player.color, (w//2, 0, w, w))
-        pygame.draw.circle(ship_surf, self.player.color, (w*3//2, w//2), w//2)
-        ship_surf = pygame.transform.rotate(ship_surf, self.pose.angle)
+        # w = int(30*c.SHIP_SCALE)
+        # ship_surf = pygame.Surface((2*w, w)).convert()
+        # ship_surf.fill(c.BLACK)
+        # ship_surf.set_colorkey(c.BLACK)
+        # pygame.draw.rect(ship_surf, self.player.color, (w//2, 0, w, w))
+        # pygame.draw.circle(ship_surf, self.player.color, (w*3//2, w//2), w//2)
+        ship_surf = pygame.transform.rotate(self.surface, self.pose.angle)
         x = self.pose.x + offset[0] - ship_surf.get_width()//2
         y = self.pose.y + offset[1] - ship_surf.get_height()//2
         surface.blit(ship_surf, (x, y))

@@ -1,5 +1,7 @@
 ##!/usr/bin/env python3
 
+import math
+
 import pygame
 
 import constants as c
@@ -13,15 +15,27 @@ from primitives import Pose
 class LevelScene(Scene):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.planets = [Planet(self.game, (200, 200), 0),
-                        Planet(self.game, (500, 500), 0, 50),
+        self.planets = [Planet(self.game, (200, 200)),
+                        Planet(self.game, (500, 500), radius=50),
                         Moon(self.game, (800, 300)),
-                        Wormhole(self.game, (675, 650), (600, 250))]
+                        Wormhole(self.game, (675, 500), (600, 250))]
         self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["Paul"], (500, 200), 180),
-                      Ship(self.game, "t50", self.game.players["Jeremy"], (500, 200), 180)]
+                      Ship(self.game, "t100 r180", self.game.players["Jeremy"], (500, 200), 180)]
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
         self.alignment = c.LEFT, c.DOWN
         self.offset = self.get_initial_offset()
+        self.particles = set()
+        self.screenshake_time = 0
+        self.screenshake_amp = 0
+
+    def shake(self, amp=15):
+        self.screenshake_amp = max(self.screenshake_amp, amp)
+        self.screenshake_time = 0
+
+    def apply_screenshake(self, offset):
+        x = offset[0] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
+        y = offset[1] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
+        return (x, y)
 
     def apply_own_offset(self, offset):
         return offset[0] + self.offset[0], offset[1] + self.offset[1]
@@ -32,14 +46,24 @@ class LevelScene(Scene):
                 self.ships.remove(ship)
         for object_to_update in self.ships + self.planets:
             object_to_update.update(dt, events)
+        for particle in self.particles:
+            particle.update(dt, events)
+        self.particles = {item for item in self.particles if not item.dead}
+
+        self.screenshake_time += dt
+        self.screenshake_amp *= 0.003**dt
+        self.screenshake_amp = max(0, self.screenshake_amp - 10*dt)
 
     def draw(self, surf, offset=(0, 0)):
-        surf.fill(c.DARK_GRAY)
-        self.surface.fill(c.BLACK)
+        offset_with_shake = self.apply_screenshake(offset)
+        surf.fill(c.GRAY)
+        self.surface.fill(c.DARK_GRAY)
         for planet in self.planets:
-            planet.draw(self.surface, offset)
+            planet.draw(self.surface, offset_with_shake)
+        for particle in self.particles:
+            particle.draw(self.surface, offset_with_shake)
         for ship in self.ships:
-            ship.draw(self.surface, offset)
+            ship.draw(self.surface, offset_with_shake)
         surf.blit(self.surface, self.apply_own_offset(offset))
 
     def get_initial_offset(self):

@@ -1,20 +1,32 @@
 ##!/usr/bin/env python3
 
+import math
+
 import pygame
 
 from planet import Planet
+import constants as c
 
 class Moon(Planet):
     def __init__(self, game, position):
         super().__init__(game, position, 0, radius=30)
         self.mass *= 2
+        self.surface = pygame.image.load(c.IMAGE_PATH + "/moon.png")
+        self.glow = pygame.image.load(c.IMAGE_PATH + "/moonglow.png")
+        self.glow.set_alpha(50)
+
+    def draw(self, surface, offset=(0, 0)):
+        self.draw_glow(surface, offset)
+        super().draw(surface, offset)
+
+    def draw_glow(self, surface, offset=(0, 0)):
+        scale = math.sin(self.age * math.pi) * 0.08 + 0.92
+        glow = pygame.transform.scale(self.glow,
+                                      (int(self.glow.get_width() * scale),
+                                      int(self.glow.get_height() * scale)))
+        x = offset[0] + self.pose.x - glow.get_width()//2
+        y = offset[1] + self.pose.y - glow.get_height()//2
+        surface.blit(glow, (x, y), special_flags=pygame.BLEND_ADD)
 
     def is_moon(self):
         return True
-
-    def draw(self, surf, offset=(0, 0)):
-        x, y = self.pose.get_position()
-        x += offset[0]
-        y += offset[1]
-        pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
-        pygame.draw.circle(surf, (200, 100, 100), (x, y), self.radius)

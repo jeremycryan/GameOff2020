@@ -94,6 +94,10 @@ class Pose:
             magnitude. Angle is unchanged.
         """
         my_magnitude = self.magnitude()
+        if my_magnitude == 0:
+            self.x = magnitude
+            self.y = 0
+            return
         self.x *= magnitude / my_magnitude
         self.y *= magnitude / my_magnitude
 
