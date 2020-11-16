@@ -9,11 +9,14 @@ import constants as c
 from primitives import PhysicsObject, Pose
 
 class Planet(PhysicsObject):
-    def __init__(self, game, position, angle=None, radius=100, gravity_radius=None, mass=None):
+    def __init__(self, game, position, angle=None, radius=100, gravity_radius=None, mass=None, home=False):
         if angle is None:
             angle = random.random()*360
         super().__init__(game, position, angle)
+        self.home = home
         self.velocity.angle = 10
+        if self.home:
+            self.velocity.angle = 0
         self.radius = radius
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
         self.mass = mass if mass is not None else radius*100
@@ -44,6 +47,8 @@ class Planet(PhysicsObject):
             return Pose((0, 0), 0)
         if distance < self.radius + ship.radius:
             ship.destroy()
+        if self.home:
+            return Pose((0, 0), 0)
         gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / distance**2
         gravity_vector = (self.pose - ship.pose)
         gravity_vector.set_angle(0)
@@ -58,7 +63,8 @@ class Planet(PhysicsObject):
         surf.blit(my_surface, (x - my_surface.get_width()//2, y - my_surface.get_height()//2))
         surf.blit(self.shadow, (x - self.shadow.get_width()//2, y - self.shadow.get_height()//2))
         pygame.draw.circle(surf, c.BLACK, (x, y), self.radius+2, width=2)
-        self.draw_gravity_region(surf, offset)
+        if not self.home:
+            self.draw_gravity_region(surf, offset)
         # pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
 
     def update(self, dt, events):
