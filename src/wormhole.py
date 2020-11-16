@@ -4,6 +4,7 @@ import pygame
 
 import constants as c
 from primitives import PhysicsObject, Pose
+from planet import Planet
 
 class Wormhole(PhysicsObject):
     def __init__(self, game, position1, position2, angle=0, radius=20, gravity_radius=None, mass=None):
@@ -15,6 +16,7 @@ class Wormhole(PhysicsObject):
         self.mass = mass if mass is not None else radius**2
         self.ships1 = []
         self.ships2 = []
+        self.age = 0
 
     def is_moon(self):
         """ Wormholes aren't moons, silly. """
@@ -57,17 +59,23 @@ class Wormhole(PhysicsObject):
         return gravity_vector
 
     def update(self, dt, events):
-        pass
+        self.age += dt
 
     def draw(self, surf, offset=(0, 0)):
         x, y = self.pose.get_position()
         x += offset[0]
         y += offset[1]
-        pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
+        #pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
         pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
 
         x, y = self.pose2.get_position()
         x += offset[0]
         y += offset[1]
-        pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
+        #pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
         pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
+
+        # This is a bit jank, but hey, it's a game jam
+        Planet.draw_gravity_region(self, surf, offset)
+        self.pose, self.pose2 = self.pose2, self.pose
+        Planet.draw_gravity_region(self, surf, offset)
+        self.pose, self.pose2 = self.pose2, self.pose
