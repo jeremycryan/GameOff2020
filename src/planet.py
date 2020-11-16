@@ -32,6 +32,15 @@ class Planet(PhysicsObject):
                                             self.surface.get_height()))
         self.shadow.set_colorkey(c.WHITE)
         self.shadow.set_alpha(70)
+        self.back_shadow = pygame.Surface((self.surface.get_width(), self.surface.get_height()))
+        self.back_shadow.fill(c.WHITE)
+        pygame.draw.circle(self.back_shadow,
+                           c.BLACK,
+                           (self.surface.get_width()//2,
+                           self.surface.get_height()//2),
+                           self.surface.get_width()//2)
+        self.back_shadow.set_alpha(80)
+        self.back_shadow.set_colorkey(c.WHITE)
         self.age = 0
 
     def is_moon(self):
@@ -56,6 +65,7 @@ class Planet(PhysicsObject):
         return gravity_vector
 
     def draw(self, surf, offset=(0, 0)):
+        self.draw_back_shadow(surf, offset)
         my_surface = pygame.transform.rotate(self.surface, self.pose.angle)
         x, y = self.pose.get_position()
         x += offset[0]
@@ -66,6 +76,12 @@ class Planet(PhysicsObject):
         if not self.home:
             self.draw_gravity_region(surf, offset)
         # pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
+
+    def draw_back_shadow(self, surf, offset=(0, 0)):
+        x, y = self.pose.get_position()
+        x += offset[0]/2 + 12 * (self.radius/100 + 0.5) - self.back_shadow.get_width()//2
+        y += offset[1]/2 + 12 * (self.radius/100 + 0.5) - self.back_shadow.get_height()//2
+        surf.blit(self.back_shadow, (x, y))
 
     def update(self, dt, events):
         super().update(dt, events)
@@ -86,7 +102,7 @@ class Planet(PhysicsObject):
             angle_rad = 2 * math.pi * i/dots + (angle_offset)
             my_radius = radius + math.sin(i) * 3
             pygame.draw.circle(surf,
-                            c.GRAY,
+                            c.LIGHT_GRAY,
                             (x + my_radius * math.sin(angle_rad), y + my_radius * -math.cos(angle_rad)),
                             1)
 
