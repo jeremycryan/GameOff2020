@@ -36,7 +36,10 @@ class AchievementRow(GameObject):
 
             veil_surf = pygame.Surface((c.ACHIEVEMENT_WIDTH, self.surface.get_height()-3))
             veil_surf.fill(c.BLACK)
-            veil_surf.set_alpha(150)
+            veil_surf.set_alpha(120)
+            self.surface.blit(veil_surf, (0, 0))
+            veil_surf.fill(player.color)
+            veil_surf.set_alpha(70)
             self.surface.blit(veil_surf, (0, 0))
 
             font = self.game.small_font if len(player.name) < 15 else self.game.very_small_font

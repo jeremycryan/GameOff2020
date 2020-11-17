@@ -13,10 +13,10 @@ class DeathParticle(Particle):
         super().__init__(game)
         self.ship = ship
         self.pose = ship.pose.copy()
-        self.velocity = Pose(((random.random() * 2 - 1) * 125,
-                             (random.random() * 2 - 1) * 125),
+        self.velocity = Pose(((random.random() * 2 - 1) * 160,
+                             (random.random() * 2 - 1) * 160),
                              random.random() * 360) + self.ship.velocity * 0.1
-        self.start_radius = 50
+        self.start_radius = 40 + random.random()*30
         self.duration = 0.6
 
     def get_scale(self):

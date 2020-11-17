@@ -46,7 +46,7 @@ class Ship(PhysicsObject):
     def destroy(self):
         self.destroyed = True
         self.game.current_scene.particles.add(Explosion(self.game, self))
-        for i in range(7):
+        for i in range(8):
             self.game.current_scene.particles.add(DeathParticle(self.game, self))
         self.game.current_scene.shake(20)
 
