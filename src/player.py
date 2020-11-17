@@ -9,7 +9,7 @@ class Player:
 
     @staticmethod
     def random_color():
-        a = 90
+        a = 120
         b = 128 + random.random() * 128
         c = 192 + random.random() * 64
         rgb = [a, b, c]

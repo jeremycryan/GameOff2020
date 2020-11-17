@@ -12,6 +12,7 @@ from moon import Moon
 from wormhole import Wormhole
 from ship import Ship
 from primitives import Pose
+from achievement_row import AchievementRow
 
 class LevelScene(Scene):
     def __init__(self, *args, **kwargs):
@@ -25,18 +26,24 @@ class LevelScene(Scene):
         #               Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
         self.ships = []
         self.spawn_ship("t100", "superduperpacman42")
-        
+
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
+        self.side_panel = pygame.Surface(c.SIDE_PANEL_SIZE)
+        self.achievement_row = AchievementRow(self.game, (0, 80))
         self.alignment = c.LEFT, c.DOWN
         self.offset = self.get_initial_offset()
         self.particles = set()
         self.screenshake_time = 0
         self.screenshake_amp = 0
         self.age = 0
+        #self.timer_label = self.game.
 
     def shake(self, amp=15):
         self.screenshake_amp = max(self.screenshake_amp, amp)
         self.screenshake_time = 0
+
+    def round_length(self):
+        return 1.1 # minutes
 
     def apply_screenshake(self, offset):
         x = offset[0] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
@@ -48,18 +55,22 @@ class LevelScene(Scene):
 
     def update(self, dt, events):
         self.age += dt
+
+        self.screenshake_time += dt
+        self.screenshake_amp *= 0.001**dt
+        self.screenshake_amp = max(0, self.screenshake_amp - 20*dt)
+
         for ship in self.ships[::-1]:
             if ship.destroyed:
                 self.ships.remove(ship)
-        for object_to_update in self.ships + self.planets:
+        for object_to_update in self.ships + self.planets + [self.achievement_row]:
             object_to_update.update(dt, events)
         for particle in self.particles:
             particle.update(dt, events)
         self.particles = {item for item in self.particles if not item.dead}
 
-        self.screenshake_time += dt
-        self.screenshake_amp *= 0.003**dt
-        self.screenshake_amp = max(0, self.screenshake_amp - 10*dt)
+        if len(self.ships) == 0 and len(self.particles) == 0:
+            self.is_running = False
 
     def draw(self, surf, offset=(0, 0)):
         offset_with_shake = self.apply_screenshake(offset)
@@ -67,12 +78,19 @@ class LevelScene(Scene):
         self.surface.fill(c.DARK_GRAY)
         self.draw_lines()
         for planet in self.planets:
+            planet.draw_gravity_region(self.surface, offset_with_shake)
+        for planet in self.planets:
             planet.draw(self.surface, offset_with_shake)
         for particle in self.particles:
             particle.draw(self.surface, offset_with_shake)
         for ship in self.ships:
             ship.draw(self.surface, offset_with_shake)
         surf.blit(self.surface, self.apply_own_offset(offset))
+
+        self.side_panel.fill(c.BLACK)
+        self.achievement_row.draw(self.side_panel)
+        self.draw_timer(self.side_panel, c.TIMER_POSITION)
+        surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
 
     def draw_lines(self):
         border = 15
@@ -136,12 +154,20 @@ class LevelScene(Scene):
         edge = int(random.random()*4)
         if edge == 0:
             x = offset
+            y = max(offset, y)
+            y = min(W - offset, y)
         elif edge == 1:
             x = W - offset
+            y = max(offset, y)
+            y = min(W - offset, y)
         elif edge == 2:
             y = offset
+            x = max(offset, x)
+            x = min(H - offset, x)
         elif edge == 3:
             y = H - offset
+            x = max(offset, x)
+            x = min(H - offset, x)
         return (x, y)
 
     def get_angle(self, p1, p2):
@@ -185,3 +211,24 @@ class LevelScene(Scene):
         player = self.game.players[name]
         ship = Ship(self.game, program, player, self.spawn_pos, self.spawn_angle)
         self.ships.append(ship)
+
+    def draw_timer(self, surface, center, offset=(0, 0)):
+        duration = self.round_length() * 60
+        left = int(duration - self.age)
+        minutes = left // 60
+        seconds = int(left % 60)
+        zero = "0" if seconds < 10 else ""
+        text = f"{minutes}:{zero}{seconds}"
+        font_dict = self.game.timer_render if minutes else self.game.red_timer_render
+        surfaces = [font_dict[digit] for digit in text]
+        total_width = sum([surf.get_width() for surf in surfaces])
+        max_height = max([surf.get_height() for surf in surfaces])
+
+        x = center[0] + offset[0] - total_width//2
+        y = center[1] + offset[1] - max_height//2
+        for item in surfaces:
+            surface.blit(item, (x, y))
+            x += item.get_width()
+
+    def next_scene(self):
+        return LevelScene(self.game)

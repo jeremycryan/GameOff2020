@@ -55,7 +55,7 @@ class Planet(PhysicsObject):
         if distance > self.gravity_radius:
             return Pose((0, 0), 0)
         if distance < self.radius + ship.radius:
-            ship.destroy()
+            self.collide_with_ship(ship)
         if self.home:
             return Pose((0, 0), 0)
         gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / distance**2
@@ -63,6 +63,9 @@ class Planet(PhysicsObject):
         gravity_vector.set_angle(0)
         gravity_vector.scale_to(gravity_magnitude)
         return gravity_vector
+
+    def collide_with_ship(self, ship):
+        ship.destroy()
 
     def draw(self, surf, offset=(0, 0)):
         self.draw_back_shadow(surf, offset)
@@ -74,7 +77,8 @@ class Planet(PhysicsObject):
         surf.blit(self.shadow, (x - self.shadow.get_width()//2, y - self.shadow.get_height()//2))
         pygame.draw.circle(surf, c.BLACK, (x, y), self.radius+2, width=2)
         if not self.home:
-            self.draw_gravity_region(surf, offset)
+            pass
+            #self.draw_gravity_region(surf, offset)
         # pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
 
     def draw_back_shadow(self, surf, offset=(0, 0)):
@@ -102,7 +106,7 @@ class Planet(PhysicsObject):
             angle_rad = 2 * math.pi * i/dots + (angle_offset)
             my_radius = radius + math.sin(i) * 3
             pygame.draw.circle(surf,
-                            c.LIGHT_GRAY,
+                            c.GRAY,
                             (x + my_radius * math.sin(angle_rad), y + my_radius * -math.cos(angle_rad)),
                             1)
 

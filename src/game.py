@@ -22,6 +22,10 @@ class Game:
         self.stream = Stream(channel="TwitchPlaysPokemon")
         self.players = {name:Player(self, name) for name in ["PlasmaStarfish", "superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
+        self.timer_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 40)
+        self.timer_render = {digit:self.timer_font.render(digit, 0, c.WHITE) for digit in "1234567890:-"}
+        self.red_timer_render = {digit:self.timer_font.render(digit, 0, (255, 80, 80)) for digit in "1234567890:-"}
+        self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 14)
         self.current_scene = LevelScene(self)
         self.main()
 

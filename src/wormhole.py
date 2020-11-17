@@ -33,11 +33,13 @@ class Wormhole(PhysicsObject):
             offset = self.pose-ship.pose
             offset.angle = 0
             ship.pose.add_pose(self.pose2 - self.pose + offset*2)
+            ship.label_pose = ship.pose.copy()
         if distance2 < self.radius and not ship in self.ships1:
             self.ships2.append(ship)
             offset = self.pose2-ship.pose
             offset.angle = 0
             ship.pose.add_pose(self.pose - self.pose2 + offset*2)
+            ship.label_pose = ship.pose.copy()
         if distance1 > self.radius and distance2 > self.radius:
             if ship in self.ships1:
                 self.ships1.remove(ship)
@@ -58,6 +60,13 @@ class Wormhole(PhysicsObject):
         gravity_vector.scale_to(gravity_magnitude)
         return gravity_vector
 
+    def draw_gravity_region(self, surf, offset=(0, 0)):
+        # This is a bit jank, but hey, it's a game jam
+        Planet.draw_gravity_region(self, surf, offset)
+        self.pose, self.pose2 = self.pose2, self.pose
+        Planet.draw_gravity_region(self, surf, offset)
+        self.pose, self.pose2 = self.pose2, self.pose
+
     def update(self, dt, events):
         self.age += dt
 
@@ -73,9 +82,3 @@ class Wormhole(PhysicsObject):
         y += offset[1]
         #pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
         pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
-
-        # This is a bit jank, but hey, it's a game jam
-        Planet.draw_gravity_region(self, surf, offset)
-        self.pose, self.pose2 = self.pose2, self.pose
-        Planet.draw_gravity_region(self, surf, offset)
-        self.pose, self.pose2 = self.pose2, self.pose

@@ -45,7 +45,7 @@ class Ship(PhysicsObject):
     def destroy(self):
         self.destroyed = True
         self.game.current_scene.particles.add(Explosion(self.game, self))
-        self.game.current_scene.shake()
+        self.game.current_scene.shake(20)
 
     def update(self, dt, events):
         super().update(dt, events)

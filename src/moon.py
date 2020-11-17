@@ -28,5 +28,9 @@ class Moon(Planet):
         y = offset[1] + self.pose.y - glow.get_height()//2
         surface.blit(glow, (x, y), special_flags=pygame.BLEND_ADD)
 
+    def collide_with_ship(self):
+        # TODO give points, proceed to next level, etc.
+        pass
+
     def is_moon(self):
         return True
