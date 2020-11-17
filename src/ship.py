@@ -6,6 +6,7 @@ from primitives import PhysicsObject, Pose
 from player import Player
 from exhaust_particle import ExhaustParticle
 from explosion import Explosion
+from death_particle import DeathParticle
 
 class Ship(PhysicsObject):
     def __init__(self, game, program_string, player, position=(0, 0), angle=90):
@@ -45,6 +46,8 @@ class Ship(PhysicsObject):
     def destroy(self):
         self.destroyed = True
         self.game.current_scene.particles.add(Explosion(self.game, self))
+        for i in range(7):
+            self.game.current_scene.particles.add(DeathParticle(self.game, self))
         self.game.current_scene.shake(20)
 
     def update(self, dt, events):

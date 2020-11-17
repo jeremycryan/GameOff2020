@@ -39,6 +39,7 @@ class ScoreManager:
     def __init__(self, filename=None):
         self.scores = []
         self.path = os.path.join(c.SCORE_SAVE_PATH, filename)
+        self.has_unsaved_changes = False
 
     def __str__(self):
         return "\n".join([str(score) for score in self.scores])
@@ -47,6 +48,7 @@ class ScoreManager:
         new_score = self.ScoreEntry(name, score, tags=tags, score_time=score_time)
         self.scores.append(new_score)
         self.scores.sort(reverse=True, key=lambda x:x.score_time)
+        self.has_unsaved_changes = True
 
     def get_last_hours(self, num_hours):
         """ Return a list of only the scores created in the last specified
@@ -66,6 +68,10 @@ class ScoreManager:
             else:
                 score_dict[name] += score_entry
         return score_dict
+
+    def save_if_changes(self):
+        if self.has_unsaved_changes:
+            self.save_to_file()
 
     def save_to_file(self):
         with open(self.path, "wb") as pickle_file:

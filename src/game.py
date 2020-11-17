@@ -10,6 +10,7 @@ from start_scene import StartScene
 from twitch_chat_stream import Stream
 from level_scene import LevelScene
 from player import Player
+from score_manager import ScoreManager
 
 class Game:
     def __init__(self):
@@ -20,12 +21,14 @@ class Game:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         self.stream = Stream(channel="TwitchPlaysPokemon")
+        self.scoreboard = ScoreManager.from_file("test_scores.pkl")
         self.players = {name:Player(self, name) for name in ["PlasmaStarfish", "superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
         self.timer_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 40)
         self.timer_render = {digit:self.timer_font.render(digit, 0, c.WHITE) for digit in "1234567890:-"}
         self.red_timer_render = {digit:self.timer_font.render(digit, 0, (255, 80, 80)) for digit in "1234567890:-"}
-        self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 14)
+        self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 10)
+        self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
         self.current_scene = LevelScene(self)
         self.main()
 
@@ -47,6 +50,10 @@ class Game:
 
     def close(self):
         """ Close the game. """
+        try:
+            self.scoreboard.save_if_changes()
+        except NameError:
+            pass
         pygame.quit()
         sys.exit()
 
