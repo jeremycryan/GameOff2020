@@ -105,15 +105,13 @@ def time_to_string(t):
 
 if __name__ == '__main__':
     scoreboard = ScoreManager.from_file("test_scores.pkl")
-    print(f"\n{'-'*10} Last hour {'-'*10}")
+    # print(f"\n{'-'*10} Last hour {'-'*10}")
     # for score in scoreboard.get_last_hours(1):
     #     print(score)
     print(f"\n{'-'*10} Totals {'-'*10}")
     totals = scoreboard.get_total_by_player(1)
-    for key in totals:
-        print(f"{totals[key]}")
-    people = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
-    for i in range(1000):
-        scoreboard.add_score(random.choice(people), random.random()*1000)
-    print(len(scoreboard.scores))
+    totals_list = [(key, totals[key]) for key in totals]
+    totals_list.sort(key=lambda x:x[1].score, reverse=True)
+    for item in totals_list:
+        print(f"{item[1]}")
     scoreboard.save_to_file()

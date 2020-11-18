@@ -13,6 +13,7 @@ from wormhole import Wormhole
 from ship import Ship
 from primitives import Pose
 from achievement_row import AchievementRow
+from nugget import Nugget
 
 class LevelScene(Scene):
     def __init__(self, *args, **kwargs):
@@ -63,7 +64,7 @@ class LevelScene(Scene):
         for ship in self.ships[::-1]:
             if ship.destroyed:
                 self.ships.remove(ship)
-        for object_to_update in self.ships + self.planets + [self.achievement_row]:
+        for object_to_update in self.ships + self.planets + [self.achievement_row] + self.nuggets:
             object_to_update.update(dt, events)
         for particle in self.particles:
             particle.update(dt, events)
@@ -76,11 +77,13 @@ class LevelScene(Scene):
         offset_with_shake = self.apply_screenshake(offset)
         surf.fill(c.BLACK)
         self.surface.fill(c.DARK_GRAY)
-        self.draw_lines()
+        #self.draw_lines()      # TODO make background more interesting but not so laggy
         for planet in self.planets:
             planet.draw_gravity_region(self.surface, offset_with_shake)
         for planet in self.planets:
             planet.draw(self.surface, offset_with_shake)
+        for nugget in self.nuggets:
+            nugget.draw(self.surface, offset_with_shake)
         for particle in self.particles:
             particle.draw(self.surface, offset_with_shake)
         for ship in self.ships:
@@ -131,6 +134,7 @@ class LevelScene(Scene):
         self.spawn_pos = (spawn_x, spawn_y)
         self.home_planet = Planet(self.game, home, angle=self.spawn_angle, radius=c.HOME_PLANET_RADIUS, home=True)
         self.planets = [self.home_planet]
+        self.nuggets = [Nugget(self.game, (c.LEVEL_WIDTH//2, c.LEVEL_HEIGHT//2), 0)]
         for i in range(100):
             moon = Pose(self.get_edge(offset=100), 0)
             if moon.distance_to(self.home_planet.pose) > 400:

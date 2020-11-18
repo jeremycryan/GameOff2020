@@ -29,6 +29,8 @@ class AchievementRow(GameObject):
             pass
 
         def achieve(self, player):
+            self.achieved = True
+
             base_color = self.surface.get_at((0, 0))
             cover_surf = pygame.Surface((self.surface.get_width() - c.ACHIEVEMENT_POINTS_WIDTH, self.surface.get_height() - 3))
             cover_surf.fill(base_color)
@@ -70,6 +72,9 @@ class AchievementRow(GameObject):
             (c.ACHIEVEMENT_LABEL_WIDTH,
             sum([item.surface.get_height() for item in self.achievements]) + 5 * (len(self.achievements) - 1) + 8))
         random.choice(self.achievements).achieve(self.game.players["PlasmaStarfish"])
+        next = random.choice(self.achievements)
+        if not next.achieved:
+            next.achieve(self.game.players["superduperpacman42"])
 
     def default_achievements(self):
         achievements = [
@@ -81,12 +86,12 @@ class AchievementRow(GameObject):
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_2.png"),
-                1000,
+                1500,
                 "1 thing and land on moon"),
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_3.png"),
-                1000,
+                2000,
                 "2 things and land on moon")
         ]
         return achievements

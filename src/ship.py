@@ -35,6 +35,8 @@ class Ship(PhysicsObject):
         self.scale = 0
         self.target_scale = 1
 
+        self.nuggets = set()
+
     def get_surface(self):
         surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()
         color_surf = pygame.Surface((surface.get_width(), surface.get_height()))
@@ -65,6 +67,8 @@ class Ship(PhysicsObject):
         self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
         for planet in self.game.current_scene.planets:
             self.acceleration.add_pose(planet.get_acceleration(self))
+        for nugget in self.game.current_scene.nuggets:
+            nugget.test_collision(self)
 
         ds = self.target_scale - self.scale
         if ds < 0.01:
