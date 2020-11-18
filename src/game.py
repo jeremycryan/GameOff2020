@@ -30,6 +30,7 @@ class Game:
         self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 10)
         self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
         self.current_scene = LevelScene(self)
+        self.fps = [0]
         self.main()
 
     def update_globals(self):
@@ -63,6 +64,9 @@ class Game:
             This can also be used as a hook to add game-wide
             display objects, like an FPS monitor.
         """
+        fps_text = f"FPS: {int(sum(self.fps)/len(self.fps))}"
+        self.screen.blit(self.small_font.render(fps_text, 0, c.BLACK), (10, 10))
+        self.screen.blit(self.small_font.render(fps_text, 0, c.WHITE), (8, 9))
         pygame.display.flip()
 
     def main(self):

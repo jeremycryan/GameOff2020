@@ -12,6 +12,7 @@ class Scene(GameObject):
 
     def main(self):
         lag = 0
+        fps_queue = []
         max_ticks_per_render = 5
         while self.is_running:
             dt, events = self.game.update_globals()
@@ -25,6 +26,10 @@ class Scene(GameObject):
                     lag = 0
                     break
             self.draw(self.game.screen)
+            fps_queue.append(1/dt)
+            if len(fps_queue) > 20:
+                self.game.fps = fps_queue + self.game.fps[:40]
+                fps_queue = []
             self.game.update_screen()
 
     def next_scene(self):
