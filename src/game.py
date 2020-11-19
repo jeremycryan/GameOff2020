@@ -20,7 +20,7 @@ class Game:
         else:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
-        self.stream = Stream(channel="TwitchPlaysPokemon")
+        self.stream = Stream(channel="plasmastarfish")
         self.scoreboard = ScoreManager.from_file("test_scores.pkl")
         self.players = {name:Player(self, name) for name in ["PlasmaStarfish", "superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)

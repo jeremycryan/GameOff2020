@@ -36,6 +36,7 @@ class Ship(PhysicsObject):
         self.target_scale = 1
 
         self.nuggets = set()
+        self.has_hit_moon = False
 
     def get_surface(self):
         surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()
@@ -73,7 +74,7 @@ class Ship(PhysicsObject):
         ds = self.target_scale - self.scale
         if ds < 0.01:
             self.scale = self.target_scale
-        self.scale += ds * dt * 8
+        self.scale += ds * dt * 7
 
         if self.pose.y < 120:
             self.label_offset = Pose((0, 35), 0)

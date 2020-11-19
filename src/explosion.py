@@ -11,10 +11,10 @@ class Explosion(Particle):
         self.ship = ship
         self.pose = ship.pose.copy()
         self.start_radius = 20
-        self.duration = 0.3
+        self.duration = 0.4
 
     def get_scale(self):
-        return 1 + self.through(loading=2.5) * 5
+        return 1 + self.through(loading=2) * 4
 
     def get_alpha(self):
         return 255 * (1 - self.through(loading=2))

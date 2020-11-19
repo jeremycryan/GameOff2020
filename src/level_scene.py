@@ -14,6 +14,7 @@ from ship import Ship
 from primitives import Pose
 from achievement_row import AchievementRow
 from nugget import Nugget
+from player import Player
 
 class LevelScene(Scene):
     def __init__(self, *args, **kwargs):
@@ -37,6 +38,11 @@ class LevelScene(Scene):
         self.screenshake_time = 0
         self.screenshake_amp = 0
         self.age = 0
+        self.scene_over = False
+
+        self.shade = pygame.Surface(c.WINDOW_SIZE)
+        self.shade.fill(c.BLACK)
+        self.shade_alpha = 255
         #self.timer_label = self.game.
 
     def shake(self, amp=15):
@@ -44,7 +50,7 @@ class LevelScene(Scene):
         self.screenshake_time = 0
 
     def round_length(self):
-        return 1.1 # minutes
+        return 5 # minutes
 
     def apply_screenshake(self, offset):
         x = offset[0] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
@@ -70,7 +76,27 @@ class LevelScene(Scene):
             particle.update(dt, events)
         self.particles = {item for item in self.particles if not item.dead}
 
-        if len(self.ships) == 0 and len(self.particles) == 0:
+        for message in self.game.stream.queue_flush():
+            if Ship.parse_program(message.text) and not self.scene_over:
+                if message.user not in self.game.players:
+                    self.game.players[message.user] = Player(self.game, message.user)
+                self.spawn_ship(message.text, message.user)
+
+        shade_speed = 900
+        if self.shade_alpha > 0 and not self.scene_over:
+            self.shade_alpha = max(0, self.shade_alpha - shade_speed * dt)
+        elif self.shade_alpha < 255 and self.scene_over:
+            self.shade_alpha = min(255, self.shade_alpha + shade_speed * dt)
+
+        if self.age > self.round_length() * 60:
+            self.scene_over = True
+        if self.achievement_row.all_scored():
+            self.scene_over = True
+        for event in events:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                self.scene_over = True
+
+        if self.scene_over and self.shade_alpha == 255:
             self.is_running = False
 
     def draw(self, surf, offset=(0, 0)):
@@ -94,6 +120,10 @@ class LevelScene(Scene):
         self.achievement_row.draw(self.side_panel)
         self.draw_timer(self.side_panel, c.TIMER_POSITION)
         surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
+
+        if self.shade_alpha > 0:
+            self.shade.set_alpha(self.shade_alpha)
+            surf.blit(self.shade, (0, 0))
 
     def draw_lines(self):
         border = 15
@@ -213,8 +243,11 @@ class LevelScene(Scene):
 
     def spawn_ship(self, program, name):
         player = self.game.players[name]
-        ship = Ship(self.game, program, player, self.spawn_pos, self.spawn_angle)
-        self.ships.append(ship)
+        new_ship = Ship(self.game, program, player, self.spawn_pos, self.spawn_angle)
+        for existing_ship in self.ships[:]:
+            if existing_ship.player == player:
+                existing_ship.destroy()
+        self.ships.append(new_ship)
 
     def draw_timer(self, surface, center, offset=(0, 0)):
         duration = self.round_length() * 60

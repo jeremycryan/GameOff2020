@@ -6,6 +6,7 @@ import pygame
 
 from planet import Planet
 import constants as c
+from death_particle import DeathParticle
 
 class Moon(Planet):
     def __init__(self, game, position):
@@ -28,8 +29,18 @@ class Moon(Planet):
         y = offset[1] + self.pose.y - glow.get_height()//2
         surface.blit(glow, (x, y), special_flags=pygame.BLEND_ADD)
 
-    def collide_with_ship(self):
+    def collide_with_ship(self, ship):
         # TODO give points, proceed to next level, etc.
+        ship.has_hit_moon = True
+        self.game.current_scene.achievement_row.score_ship(ship)
+        if ship in self.game.current_scene.ships:
+            self.game.current_scene.ships.remove(ship)
+            for i in range(5):
+                self.game.current_scene.particles.add(DeathParticle(self.game, ship))
+            self.sprout_flag(ship)
+
+    def sprout_flag(self, ship):
+        # not implemented yet, unfortunately
         pass
 
     def is_moon(self):

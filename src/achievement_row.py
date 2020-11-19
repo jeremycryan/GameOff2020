@@ -15,7 +15,8 @@ class AchievementRow(GameObject):
                     container,
                     surface,
                     points,
-                    description):
+                    description,
+                    requires=None):
             super().__init__(game)
             self.container = container
             self.surface = pygame.transform.scale(surface,
@@ -24,12 +25,23 @@ class AchievementRow(GameObject):
             self.points = points
             self.description = description
             self.achieved = False
+            self.requires = {} if requires is None else requires
 
         def update(self, dt, events):
             pass
 
+        def ship_can_score(self, ship):
+            if self.requires.get(c.MOON, False):
+                if not ship.has_hit_moon:
+                    return False
+            required_nuggets = self.requires.get(c.NUGGET, 0)
+            if len(ship.nuggets) < required_nuggets:
+                return False
+            return True
+
         def achieve(self, player):
             self.achieved = True
+            self.game.current_scene.shake(15)
 
             base_color = self.surface.get_at((0, 0))
             cover_surf = pygame.Surface((self.surface.get_width() - c.ACHIEVEMENT_POINTS_WIDTH, self.surface.get_height() - 3))
@@ -71,10 +83,6 @@ class AchievementRow(GameObject):
         self.body = pygame.transform.scale(self.body,
             (c.ACHIEVEMENT_LABEL_WIDTH,
             sum([item.surface.get_height() for item in self.achievements]) + 5 * (len(self.achievements) - 1) + 8))
-        random.choice(self.achievements).achieve(self.game.players["PlasmaStarfish"])
-        next = random.choice(self.achievements)
-        if not next.achieved:
-            next.achieve(self.game.players["superduperpacman42"])
 
     def default_achievements(self):
         achievements = [
@@ -82,17 +90,20 @@ class AchievementRow(GameObject):
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_1.png"),
                 1000,
-                "land on moon"),
+                "land on moon",
+                requires={c.MOON:True, c.NUGGET:0}),
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_2.png"),
                 1500,
-                "1 thing and land on moon"),
+                "1 thing and land on moon",
+                requires={c.MOON:True, c.NUGGET:1}),
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_3.png"),
                 2000,
-                "2 things and land on moon")
+                "2 things and land on moon",
+                requires={c.MOON:True, c.NUGGET:2})
         ]
         return achievements
 
@@ -116,3 +127,11 @@ class AchievementRow(GameObject):
         for item in self.achievements:
             item.draw(surface, (x, y))
             y += item.surface.get_height() + 5
+
+    def score_ship(self, ship):
+        for achievement in self.achievements:
+            if achievement.ship_can_score(ship):
+                achievement.achieve(ship.player)
+
+    def all_scored(self):
+        return all([item.achieved for item in self.achievements])

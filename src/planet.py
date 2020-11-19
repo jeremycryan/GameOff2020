@@ -14,12 +14,12 @@ class Planet(PhysicsObject):
             angle = random.random()*360
         super().__init__(game, position, angle)
         self.home = home
-        self.velocity.angle = 10
+        self.velocity.angle = 15
         if self.home:
             self.velocity.angle = 0
         self.radius = radius
-        self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
-        self.mass = mass if mass is not None else radius*100
+        self.gravity_radius = gravity_radius if gravity_radius is not None else 2.7*radius
+        self.mass = mass if mass is not None else radius ** 2
 
         if self.radius > 50:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
