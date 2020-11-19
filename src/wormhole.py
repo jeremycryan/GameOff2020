@@ -60,6 +60,11 @@ class Wormhole(PhysicsObject):
         gravity_vector.scale_to(gravity_magnitude)
         return gravity_vector
 
+    def overlaps(self, pose, r, clearance):
+        hit1 = pose.distance_to(self.pose) < self.radius + r + max(clearance, self.clearance)
+        hit2 = pose.distance_to(self.pose2) < self.radius + r + max(clearance, self.clearance)
+        return hit1 or hit2
+
     def draw_gravity_region(self, surf, offset=(0, 0)):
         # This is a bit jank, but hey, it's a game jam
         Planet.draw_gravity_region(self, surf, offset)

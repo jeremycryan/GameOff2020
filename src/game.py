@@ -47,6 +47,10 @@ class Game:
                 self.close()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 self.close()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                self.current_scene.spawn_level()
+                self.current_scene.ships = []
+                self.current_scene.spawn_ship("t100", "superduperpacman42")
         return dt, events
 
     def close(self):
