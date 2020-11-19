@@ -14,10 +14,10 @@ class NuggetExplosion(Particle):
         self.duration = 0.3
 
     def get_scale(self):
-        return 1 + self.through(loading=2.5) * 5
+        return 1 + self.through(loading=2.5) * 6
 
     def get_alpha(self):
-        return 255 * (1 - self.through(loading=2))
+        return 255 * (1 - self.through(loading=3))
 
     def draw(self, surface, offset=(0, 0)):
         radius = int(self.start_radius * self.get_scale())
