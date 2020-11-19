@@ -67,6 +67,9 @@ class Planet(PhysicsObject):
     def collide_with_ship(self, ship):
         ship.destroy()
 
+    def overlaps(self, pose, r, clearance):
+        return pose.distance_to(self.pose) < self.radius + r + max(clearance, self.clearance)
+
     def draw(self, surf, offset=(0, 0)):
         self.draw_back_shadow(surf, offset)
         my_surface = pygame.transform.rotate(self.surface, self.pose.angle)

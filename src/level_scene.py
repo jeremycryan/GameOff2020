@@ -155,26 +155,76 @@ class LevelScene(Scene):
             y = (c.WINDOW_HEIGHT - c.LEVEL_HEIGHT)//2
         return (x, y)
 
-    def spawn_level(self, num_planets=10):
-        home = self.get_edge()
+    def spawn_level(self, level=None):
+        if not level:
+            levels = ["giant", "small", "wormhole", "default"]
+            level = random.sample(levels, 1)[0]
+        print("Level type: " + level)
+        self.planets = []
+        self.nuggets = []
+        self.spawn_home_planet()
+        self.spawn_moon()
+        if level == "giant":
+            self.add_planet(rmin=120, rmax=150, clearance=c.MIN_SPACING+50, border=300)
+            self.spawn_waypoint(2)
+            self.add_wormhole()
+            self.add_planet(n=10)
+        elif level == "small":
+            self.spawn_waypoint(2)
+            self.add_wormhole()
+            self.add_planet(rmax=50, n=25)
+        elif level == "wormhole":
+            self.spawn_waypoint(2)
+            for i in range(4):
+                self.add_wormhole()
+            self.add_planet(n=10)
+        else:
+            self.spawn_waypoint(2)
+            self.add_wormhole()
+            self.add_planet(n=10)
+
+    def spawn_home_planet(self, home=None, clearance=c.MIN_SPACING+100):
+        if not home:
+            home = self.get_edge()
         spawn_angle = self.get_angle(home, (c.LEVEL_WIDTH/2, c.LEVEL_HEIGHT/2))
         spawn_x = home[0] + int(math.cos(spawn_angle)*(c.HOME_PLANET_RADIUS+35))
         spawn_y = home[1] - int(math.sin(spawn_angle)*(c.HOME_PLANET_RADIUS+35))
         self.spawn_angle = math.degrees(spawn_angle)
         self.spawn_pos = (spawn_x, spawn_y)
         self.home_planet = Planet(self.game, home, angle=self.spawn_angle, radius=c.HOME_PLANET_RADIUS, home=True)
-        self.planets = [self.home_planet]
-        self.nuggets = [Nugget(self.game, (c.LEVEL_WIDTH//2, c.LEVEL_HEIGHT//2), 0)]
+        self.home_planet.clearance = clearance
+        self.planets.append(self.home_planet)
+
+    def spawn_moon(self, home_clearance=400, clearance=c.MIN_SPACING + 50):
         for i in range(100):
             moon = Pose(self.get_edge(offset=100), 0)
-            if moon.distance_to(self.home_planet.pose) > 400:
+            if moon.distance_to(self.home_planet.pose) > home_clearance:
                 break
-        self.planets.append(Moon(self.game, (moon.x, moon.y)))
-        for i in range(1000):
-            self.add_planet()
-            if len(self.planets) >= num_planets+2:
-                break
-        self.add_wormhole() # for now wormhole must be added last
+        self.moon = Moon(self.game, (moon.x, moon.y))
+        self.moon.clearance = clearance
+        self.planets.append(self.moon)
+
+    def spawn_waypoint(self, n=1, home_clearance=250, moon_clearance=250, waypoint_clearance=400, clearance=c.MIN_SPACING + 50):
+        for i in range(n):
+            for i in range(100):
+                pos = self.get_viable_point(22, clearance, point=self.get_point(border=100))         
+                if not pos:
+                    continue   
+                waypoint = Pose(pos, 0)
+                if waypoint.distance_to(self.home_planet.pose) < home_clearance:
+                    continue
+                if waypoint.distance_to(self.moon.pose) < moon_clearance:
+                    continue
+                fail = False
+                for waypoint2 in self.nuggets:
+                    if waypoint.distance_to(waypoint2.pose) < waypoint_clearance:
+                        fail = True
+                        break
+                if not fail:
+                    break
+            waypoint = Nugget(self.game, (waypoint.x, waypoint.y), 0)
+            waypoint.clearance = clearance
+            self.nuggets.append(waypoint)
 
     def get_point(self, W=c.LEVEL_WIDTH, H=c.LEVEL_HEIGHT, border=0):
         x = int(random.random()*(W-border*2)) + border
@@ -207,39 +257,49 @@ class LevelScene(Scene):
     def get_angle(self, p1, p2):
         return math.atan2(p1[1]-p2[1], p2[0]-p1[0])
 
-    def get_viable_point(self, r):
-        x, y = self.get_point()
+    def get_viable_point(self, r, clearance=c.MIN_SPACING, point=None):
+        if not point:
+            point = self.get_point()
+        x, y = point
         pose = Pose((x, y), 0)
-        if pose.distance_to(self.home_planet.pose) < self.home_planet.radius + r + 100:
-            return False
-        for planet in self.planets:
-            if pose.distance_to(planet.pose) < planet.radius + r + c.MIN_SPACING:
+        for planet in self.planets + self.nuggets:
+            if planet.overlaps(pose, r, clearance):
                 return False
         return (x, y)
 
-    def add_planet(self, r=0):
-        if not r:
-            r = int(random.random()*(c.MAX_PLANET_RADIUS-c.MIN_PLANET_RADIUS))+c.MIN_PLANET_RADIUS
-        pos = self.get_viable_point(r)
-        if not pos:
-            return
-        p = Planet(self.game, pos, radius=r)
-        self.planets.append(p)
-
-    def add_wormhole(self):
+    def add_planet(self, rmin=c.MIN_PLANET_RADIUS, rmax=c.MAX_PLANET_RADIUS, n=1, clearance=c.MIN_SPACING, border=0, edge=False):
         for i in range(100):
-            pos1 = self.get_viable_point(20)
+            r = int(random.random()*(rmax-rmin))+rmin
+            if edge:
+                p = self.get_edge(offset=border)
+            else:
+                p = self.get_point(border=border)
+            pos = self.get_viable_point(r, clearance, point=p)
+            if pos:
+                p = Planet(self.game, pos, radius=r)
+                p.clearance = clearance
+                self.planets.append(p)
+                n -= 1
+                if n <= 0:
+                    break
+        return True
+
+    def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING):
+        for i in range(100):
+            pos1 = self.get_viable_point(20, clearance)
             if pos1:
                 break
         if not pos1:
             return
         for i in range(100):
-            pos2 = self.get_viable_point(20)
-            if pos2 and Pose(pos1, 0).distance_to(Pose(pos2, 0)) > 300:
+            pos2 = self.get_viable_point(20, clearance)
+            if pos2 and Pose(pos1, 0).distance_to(Pose(pos2, 0)) > min_travel:
                 break
         if not pos2:
             return
-        self.planets.append(Wormhole(self.game, pos1, pos2))
+        w = Wormhole(self.game, pos1, pos2)
+        w.clearance = clearance
+        self.planets.append(w)
 
     def spawn_ship(self, program, name):
         player = self.game.players[name]

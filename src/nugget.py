@@ -42,3 +42,6 @@ class Nugget(PhysicsObject):
     def get_picked_up(self, ship):
         ship.nuggets.add(self)
         self.game.current_scene.particles.add(NuggetExplosion(self.game, self))
+
+    def overlaps(self, pose, r, clearance):
+        return pose.distance_to(self.pose) < self.radius + r + max(clearance, self.clearance)
