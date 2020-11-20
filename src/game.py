@@ -3,6 +3,7 @@
 import sys
 
 import pygame
+import string
 
 import constants as c
 from error_logging import error_logging
@@ -13,6 +14,7 @@ from player import Player
 from score_manager import ScoreManager
 from high_score_scene import HighScoreScene
 from high_score_table import HighScoreTable
+from alert_manager import AlertManager
 
 class Game:
     def __init__(self):
@@ -31,11 +33,13 @@ class Game:
         self.timer_render = {digit:self.timer_font.render(digit, 1, c.WHITE) for digit in "1234567890:-"}
         self.red_timer_render = {digit:self.timer_font.render(digit, 1, (255, 80, 80)) for digit in "1234567890:-"}
         self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 10)
+        self.small_font_render = {char:self.small_font.render(char, 0, c.WHITE) for char in string.printable}
         self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
         self.scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 25)
         self.scoreboard_font.bold = False
         self.current_scene = LevelScene(self)
         self.fps = [0]
+        self.alertManager = AlertManager(self)
         self.main()
 
     def update_globals(self):
@@ -57,6 +61,8 @@ class Game:
                 self.current_scene.spawn_level()
                 self.current_scene.ships = []
                 self.current_scene.spawn_ship("t100", "superduperpacman42")
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
+                self.alertManager.alert("Help, I'm trapped in a spaceship factory! Please let me out before they send me to the moon...")
         return dt, events
 
     def close(self):

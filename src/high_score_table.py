@@ -104,7 +104,6 @@ class HighScoreTable(GameObject):
         self.last_snapshot = self.game.last_snapshot
         self.snapshot = self.dict_to_sorted_list(snapshot_dict)
         self.game.last_snapshot = self.snapshot
-        print(self.last_snapshot, self.snapshot)
         self.player_names = [item[0] for item in self.snapshot[:self.rows]]
         self.player_names += [c.EMPTY for i in range(self.rows - len(self.player_names))]
         self.add_missing_players()
