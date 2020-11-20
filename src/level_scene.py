@@ -63,6 +63,7 @@ class LevelScene(Scene):
 
     def update(self, dt, events):
         self.age += dt
+        self.game.alertManager.update(dt)
 
         self.screenshake_time += dt
         self.screenshake_amp *= 0.001**dt
@@ -121,6 +122,7 @@ class LevelScene(Scene):
         self.achievement_row.draw(self.side_panel)
         self.draw_timer(self.side_panel, c.TIMER_POSITION)
         surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
+        self.game.alertManager.draw(surf)
 
         if self.shade_alpha > 0:
             self.shade.set_alpha(self.shade_alpha)
@@ -339,4 +341,5 @@ class LevelScene(Scene):
             x += item.get_width()
 
     def next_scene(self):
+        self.game.alertManager.clear()
         return LevelScene(self.game, lastLevel=self.level)
