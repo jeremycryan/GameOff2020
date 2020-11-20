@@ -17,12 +17,13 @@ from nugget import Nugget
 from player import Player
 
 class LevelScene(Scene):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, lastLevel=None, **kwargs):
         super().__init__(*args, **kwargs)
         # self.planets = [Planet(self.game, (200, 200)),
         #                 Planet(self.game, (500, 500), radius=50),
         #                 Moon(self.game, (800, 300)),
         #                 Wormhole(self.game, (725, 500), (600, 250))]
+        self.lastLevel = lastLevel
         self.spawn_level()
         # self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["PlasmaStarfish"], (500, 200), 180),
         #               Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
@@ -158,7 +159,12 @@ class LevelScene(Scene):
     def spawn_level(self, level=None):
         if not level:
             levels = ["giant", "small", "wormhole", "default"]
-            level = random.sample(levels, 1)[0]
+            weights = [1, 2, 1, 4]
+            if self.lastLevel in levels and self.lastLevel != "default":
+                i = levels.index(self.lastLevel)
+                weights[i] = 0
+            level = random.choices(levels, weights)[0]
+        self.level = level
         print("Level type: " + level)
         self.planets = []
         self.nuggets = []
@@ -167,11 +173,13 @@ class LevelScene(Scene):
         if level == "giant":
             self.add_planet(rmin=120, rmax=150, clearance=c.MIN_SPACING+50, border=300)
             self.spawn_waypoint(2)
-            self.add_wormhole()
+            if random.random() < 0.3:
+                self.add_wormhole()
             self.add_planet(n=10)
         elif level == "small":
             self.spawn_waypoint(2)
-            self.add_wormhole()
+            if random.random() < 0.3:
+                self.add_wormhole()
             self.add_planet(rmax=50, n=25)
         elif level == "wormhole":
             self.spawn_waypoint(2)
@@ -180,8 +188,9 @@ class LevelScene(Scene):
             self.add_planet(n=10)
         else:
             self.spawn_waypoint(2)
-            self.add_wormhole()
-            self.add_planet(n=10)
+            if random.random() < 0.3:
+                self.add_wormhole()
+            self.add_planet(n=random.randint(8,15))
 
     def spawn_home_planet(self, home=None, clearance=c.MIN_SPACING+100):
         if not home:
@@ -286,13 +295,15 @@ class LevelScene(Scene):
 
     def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING):
         for i in range(100):
-            pos1 = self.get_viable_point(20, clearance)
+            p = self.get_point(border=100)
+            pos1 = self.get_viable_point(20, clearance, point=p)
             if pos1:
                 break
         if not pos1:
             return
         for i in range(100):
-            pos2 = self.get_viable_point(20, clearance)
+            p = self.get_point(border=100)
+            pos2 = self.get_viable_point(20, clearance, point=p)
             if pos2 and Pose(pos1, 0).distance_to(Pose(pos2, 0)) > min_travel:
                 break
         if not pos2:
@@ -328,4 +339,4 @@ class LevelScene(Scene):
             x += item.get_width()
 
     def next_scene(self):
-        return LevelScene(self.game)
+        return LevelScene(self.game, lastLevel=self.level)
