@@ -1,5 +1,7 @@
 ##!/usr/bin/env python3
 
+import math
+
 import pygame
 
 from primitives import GameObject, Pose
@@ -7,10 +9,11 @@ import constants as c
 from player import Player
 
 class HighScoreColumn(GameObject):
-    def __init__(self, game, parent, get_data, align=c.LEFT, width=100):
+    def __init__(self, game, parent, get_data, align=c.LEFT, width=100, small_font=False):
         super().__init__(game)
         self.align = align
         self.width = width
+        self.small_font = small_font
 
         # get_data takes in a player and returns data for the column as string
         self.get_data = get_data
@@ -22,7 +25,14 @@ class HighScoreRow(GameObject):
         self.player = player
         self.columns = columns if columns is not None else []
         self.row_number = row_number
+        self.wiggle_radius = 3
+        self.wiggle_offset = -self.row_number * 0.6
+        self.wiggle_frequency = 0.7
+        self.debug_lines = False
+        self.age = 0
         self.tile = self.get_tile()
+        self.tile_shadow.fill(c.BLACK)
+        self.tile_shadow.set_alpha(80)
 
     def height(self):
         return self.tile.get_height()
@@ -34,16 +44,20 @@ class HighScoreRow(GameObject):
             return c.SCORE_EVEN_COLOR
 
     def get_piece(self, player, column):
-        text = column.get_data(player)
+        line_text = column.get_data(player)
         color = c.BLACK
-        if text and text[0] == "@":
-            text = text[1:]
+        if line_text and line_text[0] == "@":
+            line_text = line_text[1:]
             color = player.color
-        text = self.game.scoreboard_font.render(text, 1, color)
-        surf = pygame.Surface((column.width, c.SCORE_ROW_HEIGHT))
+        font = self.game.scoreboard_font
+        if column.small_font:
+            font = self.game.small_scoreboard_font
+        text = font.render(line_text, 1, color)
+        text_white = font.render(line_text, 1, c.WHITE)
+        surf = pygame.Surface((column.width, c.SCORE_ROW_HEIGHT - c.SCORE_TILE_PADDING*2))
         surf.fill(self.tile_color())
         surf.set_colorkey(self.tile_color())
-        if column.align is c.LEFT:
+        if column.align is c.LEFT or text.get_width() > surf.get_width() - c.SCORE_ROW_PADDING*2:
             x = c.SCORE_ROW_PADDING
         elif column.align is c.RIGHT:
             x = surf.get_width() - text.get_width() - c.SCORE_ROW_PADDING
@@ -51,11 +65,20 @@ class HighScoreRow(GameObject):
             x = surf.get_width()//2 - text.get_width()//2
         if player.name is c.EMPTY:
             text.set_alpha(128)
-        surf.blit(text, (x, surf.get_height()//2 - text.get_height()//2 - c.SCORE_TILE_PADDING))
+            text_white.set_alpha(0)
+        else:
+            text.set_alpha(128)
+        white_offset = 1
+        offsets = c.TEXT_BLIT_OFFSETS if player.name is not c.EMPTY else [c.CENTER]
+        for offset in offsets:
+            surf.blit(text, (x + offset[0], surf.get_height()//2 - text.get_height()//2 + offset[1]))
+        surf.blit(text_white, (x, surf.get_height()//2 - text.get_height()//2 - white_offset))
         if player.name is c.EMPTY:
             black = pygame.Surface((surf.get_width(), surf.get_height()))
-            black.set_alpha(60)
+            black.set_alpha(75)
             surf.blit(black, (0, 0))
+        if self.debug_lines:
+            pygame.draw.rect(surf, c.RED, (0, 0, surf.get_width(), surf.get_height()), width=1)
         return surf
 
     def get_row_surface(self, player):
@@ -67,6 +90,7 @@ class HighScoreRow(GameObject):
         for piece in pieces:
             surf.blit(piece, (x, 0))
             x += piece.get_width()
+        self.tile_shadow = surf.copy()
         return surf
 
     def get_tile(self):
@@ -75,6 +99,7 @@ class HighScoreRow(GameObject):
     def surf_to_tile(self, surface):
         tile = pygame.Surface((surface.get_width() + c.SCORE_TILE_PADDING * 2, c.SCORE_ROW_HEIGHT))
         tile.fill((50, 80, 110))
+        tile.set_colorkey((50, 80, 110))
         pygame.draw.rect(tile,
                         c.GRAY,
                         (c.SCORE_TILE_PADDING,
@@ -87,11 +112,15 @@ class HighScoreRow(GameObject):
         return tile
 
     def update(self, dt, events):
-        pass
+        self.age += dt
 
     def draw(self, surface, offset=(0, 0)):
-        x = offset[0] - self.tile.get_width()//2
-        y = offset[1] - self.tile.get_height()//2
+        wx = math.sin(math.pi * 2 * self.wiggle_frequency * self.age + self.wiggle_offset) * self.wiggle_radius
+        wy = -math.cos(math.pi * 2 * self.wiggle_frequency * self.age + self.wiggle_offset) * self.wiggle_radius
+        x = offset[0] - self.tile.get_width()//2 + wx
+        y = offset[1] - self.tile.get_height()//2 + wy
+        if not self.player.name is c.EMPTY:
+            surface.blit(self.tile_shadow, (x+9, y+11))
         surface.blit(self.tile, (x, y))
 
 class HighScoreTable(GameObject):
@@ -125,7 +154,7 @@ class HighScoreTable(GameObject):
 
     def render_placing(self, player):
         self.placing_calls += 1
-        return self.placing_calls
+        return f"#{self.placing_calls}"
 
     def player_to_score(self, player):
         if player.name == c.EMPTY:
@@ -169,7 +198,7 @@ class HighScoreTable(GameObject):
         self.columns = [
             HighScoreColumn(self.game, self, lambda x: f"{self.render_placing(x)}", align=c.CENTER, width=50),
             HighScoreColumn(self.game, self, lambda x: f"{x.name}", align=c.CENTER, width=400),
-            HighScoreColumn(self.game, self, lambda x: f"{self.score_increase(x)}", align=c.CENTER, width=80),
+            HighScoreColumn(self.game, self, lambda x: f"{self.score_increase(x)}", align=c.CENTER, width=70, small_font=True),
             HighScoreColumn(self.game, self, lambda x: f"{int(self.player_to_score(x))}", align=c.RIGHT, width=120)
         ]
 
@@ -180,11 +209,15 @@ class HighScoreTable(GameObject):
         return l
 
     def update(self, dt, events):
-        pass
+        for row in self.rows:
+            row.update(dt, events)
 
     def draw(self, surface, offset=(0, 0)):
+        height = c.SCORE_ROW_HEIGHT * len(self.rows) + 2 * c.SCORE_TABLE_PADDING
+        width = self.rows[0].tile.get_width() + 2 * c.SCORE_TABLE_PADDING
         x = offset[0] + self.pose.x
-        y = offset[1] + self.pose.y - (c.SCORE_ROW_HEIGHT * len(self.rows))//2
+        y = offset[1] + self.pose.y - (c.SCORE_ROW_HEIGHT * len(self.rows))//2 + c.SCORE_ROW_HEIGHT//2
+        pygame.draw.rect(surface, c.SCORE_TABLE_COLOR, (x - width//2, y - c.SCORE_TABLE_PADDING - c.SCORE_ROW_HEIGHT//2, width, height))
         for row in self.rows:
             row.draw(surface, (x, y))
             y += row.height()

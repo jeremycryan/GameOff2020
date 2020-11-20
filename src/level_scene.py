@@ -167,7 +167,7 @@ class LevelScene(Scene):
                 weights[i] = 0
             level = random.choices(levels, weights)[0]
         self.level = level
-        print("Level type: " + level)
+        #print("Level type: " + level)
         self.planets = []
         self.nuggets = []
         self.spawn_home_planet()

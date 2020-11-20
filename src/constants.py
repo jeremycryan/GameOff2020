@@ -27,6 +27,8 @@ SCORE_ROW_HEIGHT = 45 + SCORE_TILE_PADDING * 2
 EMPTY = "Empty"
 SCORE_EVEN_COLOR = 140, 180, 220
 SCORE_ODD_COLOR = 110, 150, 195
+SCORE_TABLE_PADDING = 20
+SCORE_TABLE_COLOR = (40, 70, 90)
 
 TIMER_POSITION = SIDE_PANEL_WIDTH//2, 40
 
@@ -54,6 +56,16 @@ UP = (0, -1)
 LEFT = (-1, 0)
 DOWN = (0, 1)
 CENTER = (0, 0)
+
+TEXT_BLIT_WIDTH = 2
+TEXT_BLIT_OFFSETS = ((-TEXT_BLIT_WIDTH, 0),
+                    (-TEXT_BLIT_WIDTH//2, TEXT_BLIT_WIDTH//2),
+                    (0, TEXT_BLIT_WIDTH),
+                    (TEXT_BLIT_WIDTH//2, TEXT_BLIT_WIDTH//2),
+                    (TEXT_BLIT_WIDTH, 0),
+                    (TEXT_BLIT_WIDTH//2, -TEXT_BLIT_WIDTH//2),
+                    (0, -TEXT_BLIT_WIDTH),
+                    (-TEXT_BLIT_WIDTH//2, -TEXT_BLIT_WIDTH//2))
 
 COMMANDS = {"thrust":'t', "delay":'d', "rotate":'r'}
 COMMANDS_MIN = {'t':(0,), 'd':(0,), 'r':(-360,)}

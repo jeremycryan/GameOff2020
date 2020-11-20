@@ -36,6 +36,7 @@ class Game:
         self.small_font_render = {char:self.small_font.render(char, 0, c.WHITE) for char in string.printable}
         self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
         self.scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 25)
+        self.small_scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 16)
         self.scoreboard_font.bold = False
         self.current_scene = LevelScene(self)
         self.fps = [0]

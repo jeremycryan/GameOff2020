@@ -23,6 +23,7 @@ class HighScoreScene(Scene):
         self.age += dt
         if self.age > 5:
             self.is_running = False
+        self.table.update(dt, events)
 
     def draw(self, surface, offset=(0, 0)):
         surface.fill(c.BLACK)
