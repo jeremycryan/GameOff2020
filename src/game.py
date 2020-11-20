@@ -11,6 +11,8 @@ from twitch_chat_stream import Stream
 from level_scene import LevelScene
 from player import Player
 from score_manager import ScoreManager
+from high_score_scene import HighScoreScene
+from high_score_table import HighScoreTable
 
 class Game:
     def __init__(self):
@@ -22,13 +24,16 @@ class Game:
         self.clock = pygame.time.Clock()
         self.stream = Stream(channel="plasmastarfish")
         self.scoreboard = ScoreManager.from_file("test_scores.pkl")
+        self.last_snapshot = None
         self.players = {name:Player(self, name) for name in ["PlasmaStarfish", "superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
-        self.timer_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 40)
-        self.timer_render = {digit:self.timer_font.render(digit, 0, c.WHITE) for digit in "1234567890:-"}
-        self.red_timer_render = {digit:self.timer_font.render(digit, 0, (255, 80, 80)) for digit in "1234567890:-"}
+        self.timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 55)
+        self.timer_render = {digit:self.timer_font.render(digit, 1, c.WHITE) for digit in "1234567890:-"}
+        self.red_timer_render = {digit:self.timer_font.render(digit, 1, (255, 80, 80)) for digit in "1234567890:-"}
         self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 10)
         self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
+        self.scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 25)
+        self.scoreboard_font.bold = False
         self.current_scene = LevelScene(self)
         self.fps = [0]
         self.main()
@@ -80,6 +85,9 @@ class Game:
             self.current_scene = self.current_scene.next_scene()
             if self.current_scene is None:
                 self.close()
+
+    def high_score_scene(self):
+        return HighScoreScene(self)
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

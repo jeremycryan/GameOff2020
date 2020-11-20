@@ -51,7 +51,7 @@ class LevelScene(Scene):
         self.screenshake_time = 0
 
     def round_length(self):
-        return 5 # minutes
+        return 10 # minutes
 
     def apply_screenshake(self, offset):
         x = offset[0] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
@@ -216,9 +216,9 @@ class LevelScene(Scene):
     def spawn_waypoint(self, n=1, home_clearance=250, moon_clearance=250, waypoint_clearance=400, clearance=c.MIN_SPACING + 50):
         for i in range(n):
             for i in range(100):
-                pos = self.get_viable_point(22, clearance, point=self.get_point(border=100))         
+                pos = self.get_viable_point(22, clearance, point=self.get_point(border=100))
                 if not pos:
-                    continue   
+                    continue
                 waypoint = Pose(pos, 0)
                 if waypoint.distance_to(self.home_planet.pose) < home_clearance:
                     continue
@@ -339,4 +339,4 @@ class LevelScene(Scene):
             x += item.get_width()
 
     def next_scene(self):
-        return LevelScene(self.game, lastLevel=self.level)
+        return self.game.high_score_scene()
