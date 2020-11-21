@@ -25,7 +25,7 @@ class HighScoreRow(GameObject):
         self.player = player
         self.columns = columns if columns is not None else []
         self.row_number = row_number
-        self.wiggle_radius = 3
+        self.wiggle_radius = 2
         self.wiggle_offset = -self.row_number * 0.6
         self.wiggle_frequency = 0.7
         self.debug_lines = False
@@ -124,23 +124,32 @@ class HighScoreRow(GameObject):
         surface.blit(self.tile, (x, y))
 
 class HighScoreTable(GameObject):
-    def __init__(self, game):
+    def __init__(self, game, hours_to_display=48):
         super().__init__(game)
         self.pose = Pose((c.WINDOW_WIDTH//2, c.WINDOW_HEIGHT//2), 0)
-        hours_to_display = 480
+        self.title = f"High scores".upper()
+        self.description = f"Last {hours_to_display} hours".upper()
         snapshot_dict = self.game.scoreboard.get_total_by_player(hours_to_display)
         self.rows = 10
         self.last_snapshot = self.game.last_snapshot
         self.snapshot = self.dict_to_sorted_list(snapshot_dict)
         self.game.last_snapshot = self.snapshot
         self.player_names = [item[0] for item in self.snapshot[:self.rows]]
-        self.player_names += [c.EMPTY for i in range(self.rows - len(self.player_names))]
         self.add_missing_players()
+        self.player_names += [c.EMPTY for i in range(self.rows - len(self.player_names))]
         self.columns = []
         self.placing_calls = 0
         self.assemble_table()
         players = [self.game.players[name] for name in self.player_names]
         self.rows = [HighScoreRow(self.game, player, columns=self.columns, row_number=i) for i, player in enumerate(players)]
+        self.width = c.SCORE_TABLE_WIDTH
+        self.height = c.SCORE_TABLE_HEIGHT
+        self.background_surface = pygame.image.load(c.IMAGE_PATH + "/scoreboard_background.png")
+        self.background_surface = pygame.transform.scale(self.background_surface,
+            (self.width - c.SCORE_TABLE_PADDING*2,
+            self.height - c.SCORE_TABLE_PADDING*2))
+        self.title_surf, self.description_surf = self.table_title_surfaces()
+        self.age = 0
 
     def add_missing_players(self):
         if c.EMPTY not in self.game.players:
@@ -154,7 +163,7 @@ class HighScoreTable(GameObject):
 
     def render_placing(self, player):
         self.placing_calls += 1
-        return f"#{self.placing_calls}"
+        return f"{self.placing_calls}."
 
     def player_to_score(self, player):
         if player.name == c.EMPTY:
@@ -209,15 +218,27 @@ class HighScoreTable(GameObject):
         return l
 
     def update(self, dt, events):
+        self.age += dt
         for row in self.rows:
             row.update(dt, events)
 
+    def table_title_surfaces(self):
+        title = self.game.scoreboard_title_font.render(self.title, 1, c.WHITE)
+        description = self.game.scoreboard_font.render(self.description, 1, c.WHITE)
+        return title, description
+
     def draw(self, surface, offset=(0, 0)):
-        height = c.SCORE_ROW_HEIGHT * len(self.rows) + 2 * c.SCORE_TABLE_PADDING
-        width = self.rows[0].tile.get_width() + 2 * c.SCORE_TABLE_PADDING
-        x = offset[0] + self.pose.x
-        y = offset[1] + self.pose.y - (c.SCORE_ROW_HEIGHT * len(self.rows))//2 + c.SCORE_ROW_HEIGHT//2
-        pygame.draw.rect(surface, c.SCORE_TABLE_COLOR, (x - width//2, y - c.SCORE_TABLE_PADDING - c.SCORE_ROW_HEIGHT//2, width, height))
+        height = self.height - c.SCORE_TABLE_PADDING*2
+        width = self.width - c.SCORE_TABLE_PADDING*2
+        yoffset = 32
+        x = width//2
+        y = height//2 - (c.SCORE_ROW_HEIGHT * len(self.rows))//2 + c.SCORE_ROW_HEIGHT//2 + yoffset
+        y_title = y - yoffset + math.sin(self.age * 3) * 2
+        back_surf = self.background_surface.copy()
+        #pygame.draw.rect(back_surf, c.SCORE_TABLE_COLOR, (x - width//2, y - c.SCORE_TABLE_PADDING - c.SCORE_ROW_HEIGHT//2, width, height))
         for row in self.rows:
-            row.draw(surface, (x, y))
+            row.draw(back_surf, (x, y))
             y += row.height()
+        back_surf.blit(self.title_surf, (x-self.title_surf.get_width()//2, y_title - 52 - self.title_surf.get_height()//2))
+        back_surf.blit(self.description_surf, (x-self.description_surf.get_width()//2, y_title - 22 - self.description_surf.get_height()//2))
+        surface.blit(back_surf, (c.SCORE_TABLE_PADDING, c.SCORE_TABLE_PADDING))

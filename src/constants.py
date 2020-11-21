@@ -27,8 +27,14 @@ SCORE_ROW_HEIGHT = 45 + SCORE_TILE_PADDING * 2
 EMPTY = "Empty"
 SCORE_EVEN_COLOR = 140, 180, 220
 SCORE_ODD_COLOR = 110, 150, 195
-SCORE_TABLE_PADDING = 20
+SCORE_TABLE_PADDING = 0
 SCORE_TABLE_COLOR = (40, 70, 90)
+SCORE_TABLE_WIDTH = int(WINDOW_WIDTH * 0.6)
+SCORE_TABLE_HEIGHT = WINDOW_HEIGHT
+
+ALERT_SIDE_PADDING = 20
+ALERT_LINE_SPACING = 20
+ALERT_BODY_SPACE = 4
 
 TIMER_POSITION = SIDE_PANEL_WIDTH//2, 40
 
@@ -89,8 +95,35 @@ NUGGET = 1
 
 ALERT_PADDING = {RIGHT:10, LEFT:10, DOWN:10, UP:10}
 ALERT_MARGIN = {RIGHT:10, LEFT:10, DOWN:10, UP:10}
-ALERT_DURATION = 5
-ALERT_ALPHA = 200
-ALERT_FADEOUT = 1
+ALERT_DURATION = 4
+ALERT_ALPHA = 135
+ALERT_FADEOUT = 0.25
 ALERT_WIDTH = 300
 ALERT_NUM = 3
+ALERT_BACKGROUND_COLOR = BLACK
+ALERT_TEXT_COLOR = WHITE
+MAX_ALERT_HEIGHT = WINDOW_HEIGHT*0.65
+PAUL_ALERT_LINE_SPACING = 0
+
+JOKE_MESSAGES = (
+    "Help, I'm trapped in a spaceship factory! Please let me out before they send me to the moon...",
+    "Beep boop, out of mayonnaise.",
+    "On behalf of NeoSpace Enterprises, we apologize for any death or dismemberment.",
+    "Press A again, I dare you."
+)
+
+HINTS = (
+    "When reading your code, the game ignores spaces and semicolons. Feel free to use them to keep organized!",
+    "You can type !score to view your current score.\n(...or at least we intend to implement it!)",
+    "Your ship rotation is measured in degrees per second, so you can calculate precise turns with the right timing.",
+    "You only get points for an achievement if you're the first player to score it. Speed is important!",
+    "This game was created by plasmastarfish and superduperpacman42 for the 2020 Github Game Off.\nIts source code is at github.com/jeremycryan.",
+)
+
+MULT_0_MESSAGES = (
+    "You can only score leaderboard points in games with three or more players.\n\nThis game had {num} players.",
+)
+
+MULT_MESSAGES = (
+    "The more players in the game, the more points are scored by achievements!\n\nThis game had {num} players.",
+)

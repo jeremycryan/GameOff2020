@@ -24,6 +24,7 @@ class LevelScene(Scene):
         #                 Moon(self.game, (800, 300)),
         #                 Wormhole(self.game, (725, 500), (600, 250))]
         self.lastLevel = lastLevel
+        self.game.players_in_last_round = set()
         self.spawn_level()
         # self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["PlasmaStarfish"], (500, 200), 180),
         #               Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
@@ -63,7 +64,6 @@ class LevelScene(Scene):
 
     def update(self, dt, events):
         self.age += dt
-        self.game.alertManager.update(dt)
 
         self.screenshake_time += dt
         self.screenshake_amp *= 0.001**dt
@@ -122,7 +122,6 @@ class LevelScene(Scene):
         self.achievement_row.draw(self.side_panel)
         self.draw_timer(self.side_panel, c.TIMER_POSITION)
         surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
-        self.game.alertManager.draw(surf)
 
         if self.shade_alpha > 0:
             self.shade.set_alpha(self.shade_alpha)
@@ -321,6 +320,8 @@ class LevelScene(Scene):
             if existing_ship.player == player:
                 existing_ship.destroy()
         self.ships.append(new_ship)
+
+        self.game.players_in_last_round.add(player)
 
     def draw_timer(self, surface, center, offset=(0, 0)):
         duration = self.round_length() * 60
