@@ -54,6 +54,9 @@ class Stream:
             for line in resp.split("\n"):
                 if len(line)<=2 or not "!" in line:
                     continue
+                if line[:4] == "PING :":
+                    self.sock.send("PONG :Still alive\r\n")
+                    print("PONG")
                 user = line[1:].split("!")[0].strip()
                 msg = ":".join(line.split(":")[2:]).strip()
                 with self.queue_mutex:

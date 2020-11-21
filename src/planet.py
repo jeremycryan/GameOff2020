@@ -95,6 +95,8 @@ class Planet(PhysicsObject):
         self.age += dt
 
     def draw_gravity_region(self, surf, offset=(0, 0)):
+        if self.home:
+            return
         radius = self.gravity_radius
         pixels_per_degree = math.pi * 2 * radius / 360
         x, y = self.pose.get_position()

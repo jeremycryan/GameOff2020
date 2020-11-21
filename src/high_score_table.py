@@ -45,15 +45,15 @@ class HighScoreRow(GameObject):
 
     def get_piece(self, player, column):
         line_text = column.get_data(player)
-        color = c.BLACK
+        color = c.WHITE
         if line_text and line_text[0] == "@":
             line_text = line_text[1:]
             color = player.color
         font = self.game.scoreboard_font
         if column.small_font:
             font = self.game.small_scoreboard_font
-        text = font.render(line_text, 1, color)
-        text_white = font.render(line_text, 1, c.WHITE)
+        text = font.render(line_text, 1, c.BLACK)
+        text_white = font.render(line_text, 1, color)
         surf = pygame.Surface((column.width, c.SCORE_ROW_HEIGHT - c.SCORE_TILE_PADDING*2))
         surf.fill(self.tile_color())
         surf.set_colorkey(self.tile_color())

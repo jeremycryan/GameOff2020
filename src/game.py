@@ -28,6 +28,7 @@ class Game:
         self.players_in_last_round = set()
         self.stream = Stream(channel="plasmastarfish")
         self.scoreboard = ScoreManager.from_file("test_scores.pkl")
+        self.temp_scores = {}
         if not len(self.scoreboard.scores):
             self.scoreboard.add_score("N4tticus", 5000)
             self.scoreboard.add_score("ZebulahCrimson", 3500)
@@ -36,6 +37,7 @@ class Game:
         self.players = {name:Player(self, name) for name in ["superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
         self.timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 55)
+        self.small_timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 40)
         self.timer_render = {digit:self.timer_font.render(digit, 1, c.WHITE) for digit in "1234567890:-"}
         self.red_timer_render = {digit:self.timer_font.render(digit, 1, (255, 80, 80)) for digit in "1234567890:-"}
         self.small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 10)
@@ -50,7 +52,7 @@ class Game:
         self.scoreboard_font.bold = False
         self.alert_large_font = pygame.font.Font(c.FONT_PATH + "/eras_demi.ttf", 50)
         self.other_alert_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 14)
-        self.current_scene = LevelScene(self)
+        self.current_scene = HighScoreScene(self)
         self.fps = [0]
         self.alertManager = AlertManager(self)
         self.main()

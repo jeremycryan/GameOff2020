@@ -23,6 +23,7 @@ class LevelScene(Scene):
         #                 Planet(self.game, (500, 500), radius=50),
         #                 Moon(self.game, (800, 300)),
         #                 Wormhole(self.game, (725, 500), (600, 250))]
+        self.game.temp_scores = {}
         self.lastLevel = lastLevel
         self.game.players_in_last_round = set()
         self.spawn_level()
@@ -342,5 +343,8 @@ class LevelScene(Scene):
             x += item.get_width()
 
     def next_scene(self):
+        multiplier = self.game.player_multiplier()
+        for player_name in self.game.temp_scores:
+            self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
         self.game.alertManager.clear()
         return self.game.high_score_scene()

@@ -6,6 +6,7 @@ import random
 import pygame
 
 from primitives import GameObject, Pose
+from planet import Planet
 import constants as c
 
 class AlertBox(GameObject):
@@ -130,10 +131,58 @@ class PlayerMultiplierAlertBox(AlertBox):
             surface.get_height()//2 - render.get_height()//2))
         return surface
 
-class Countdown(GameObject):
-    def __init__(self, game):
+class VotingObject(GameObject):
+    def __init__(self, game, position, strings):
         super().__init__(game)
-        self.duration = 20
+        self.option_keys = c.OPTION_A, c.OPTION_B
+        self.option_strings = strings
+        self.votes = {option:set() for option in self.option_keys}
+        self.planet_dict = {option:Planet(self.game, (0, 0)) for option in self.option_keys}
+
+    def vote(self, player, option):
+        for options in self.votes:
+            cur_votes = self.votes[option]
+            if player in cur_votes:
+                cur_votes.remove(player)
+        self.votes[option].add(player)
+
+    def draw_option(self, option_key, surface, offset=(0, 0)):
+        pass
+
+class Countdown(GameObject):
+    def __init__(self, game, position):
+        super().__init__(game)
+        self.duration = 30.999  # seconds
+        self.pose = Pose(position, 0)
+        self.color = (100, 110, 135)
+
+    def update(self, dt, events):
+        self.duration -= dt
+
+    def over(self):
+        return self.duration < 0
+
+    def to_string(self):
+        if self.over():
+            return "0"
+        else:
+            return f"{int(self.duration)}"
+
+    def draw(self, surface, offset=(0, 0)):
+        text_surf = self.game.scoreboard_font.render("Next round in ", 1, self.color)
+        surf = self.game.small_timer_font.render(self.to_string(), 1, self.color)
+        width = text_surf.get_width() + surf.get_width()
+        x = self.pose.x + offset[0] - width//2
+        y = self.pose.y + offset[1]
+        scale = 0.6 + abs(math.sin(self.duration * math.pi)) * 0.4
+        scale = 1 - (1 - scale)**1.5
+        if self.duration < 0:
+            scale = max(0, 0.7 + self.duration)
+        scaled_surf = pygame.transform.scale(surf, (int(surf.get_width() * scale), int(surf.get_height() * scale)))
+        surface.blit(scaled_surf,
+            (x + text_surf.get_width() + surf.get_width()//2 - scaled_surf.get_width()//2,
+            y - scaled_surf.get_height()//2))
+        surface.blit(text_surf, (x, y - text_surf.get_height()//2))
 
 class TransitionGui(GameObject):
 
@@ -148,9 +197,14 @@ class TransitionGui(GameObject):
         self.background = pygame.transform.scale(self.background, (self.width, self.height))
         self.add_tip_box()
         self.add_player_mult_box()
+        self.objects.append(Countdown(self.game, (0, c.WINDOW_HEIGHT*0.44)))
+        self.countdown = self.objects[-1]
+
+    def countdown_over(self):
+        return self.countdown.over()
 
     def add_tip_box(self):
-        position = 0, c.WINDOW_HEIGHT*0.28
+        position = 0, c.WINDOW_HEIGHT*0.30
         header = "Helpful hint"
         body = random.choice(c.HINTS)
         #ss = pygame.image.load(c.IMAGE_PATH + "/bang.png")

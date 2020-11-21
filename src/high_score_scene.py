@@ -36,6 +36,8 @@ class HighScoreScene(Scene):
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 self.scene_over = True
+        if self.side_gui.countdown_over():
+            self.scene_over = True
         self.table.update(dt, events)
         self.side_gui.update(dt, events)
 

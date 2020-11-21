@@ -16,7 +16,8 @@ class AchievementRow(GameObject):
                     surface,
                     points,
                     description,
-                    requires=None):
+                    requires=None,
+                    tags=None):
             super().__init__(game)
             self.container = container
             self.surface = pygame.transform.scale(surface,
@@ -25,6 +26,7 @@ class AchievementRow(GameObject):
             self.points = points
             self.description = description
             self.achieved = False
+            self.tags = [] if tags is None else tags
             self.requires = {} if requires is None else requires
 
         def update(self, dt, events):
@@ -61,7 +63,7 @@ class AchievementRow(GameObject):
             y = self.surface.get_height()//2 - font_render.get_height()//2
             x = (c.ACHIEVEMENT_WIDTH - c.ACHIEVEMENT_POINTS_WIDTH)//2 + c.ACHIEVEMENT_POINTS_WIDTH - font_render.get_width()//2
 
-            self.game.scoreboard.add_score(player.name, self.points)
+            self.game.temp_scores[player.name] = self.game.temp_scores.get(player.name, 0) + self.points
 
             self.surface.blit(font_render, (x, y))
 
@@ -91,19 +93,22 @@ class AchievementRow(GameObject):
                 pygame.image.load(c.IMAGE_PATH + "/achievement_1.png"),
                 1000,
                 "land on moon",
-                requires={c.MOON:True, c.NUGGET:0}),
+                requires={c.MOON:True, c.NUGGET:0},
+                tags=[c.MOON_ACH]),
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_2.png"),
                 1500,
                 "1 thing and land on moon",
-                requires={c.MOON:True, c.NUGGET:1}),
+                requires={c.MOON:True, c.NUGGET:1},
+                tags=[c.MOON_1_NUGGET_ACH]),
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_3.png"),
                 2000,
                 "2 things and land on moon",
-                requires={c.MOON:True, c.NUGGET:2})
+                requires={c.MOON:True, c.NUGGET:2},
+                tags=[c.MOON_2_NUGGET_ACH])
         ]
         return achievements
 
