@@ -346,5 +346,5 @@ class LevelScene(Scene):
         multiplier = self.game.player_multiplier()
         for player_name in self.game.temp_scores:
             self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
-        self.game.alertManager.clear()
+        #self.game.alertManager.clear()
         return self.game.high_score_scene()

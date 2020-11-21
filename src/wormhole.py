@@ -11,13 +11,33 @@ class Wormhole(PhysicsObject):
         super().__init__(game, position1, angle)
         self.pose2 = Pose(position2, 0)
         self.home = False
-        self.velocity.angle = 15
+        self.velocity.angle = -100
         self.radius = radius
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
         self.mass = mass if mass is not None else radius**2
         self.ships1 = []
         self.ships2 = []
         self.age = 0
+        self.surfs = self.get_surfs()
+
+    def get_surfs(self):
+        surfs = []
+        alpha = 40
+        base = pygame.image.load(c.IMAGE_PATH + "/wormhole.png")
+        base.set_colorkey(c.YELLOW)
+        scale = 1
+        for i in range(4):
+            new_surf = base.copy()
+            new_surf.set_alpha(alpha)
+            alpha += (255 - alpha)/4
+            new_surf = pygame.transform.scale(new_surf,
+                (int(new_surf.get_width() * scale),
+                int(new_surf.get_height() * scale)))
+            scale *= 0.9
+            if i%2==0:
+                new_surf = pygame.transform.flip(new_surf, 1, 0)
+            surfs.append(new_surf)
+        return surfs
 
     def is_moon(self):
         """ Wormholes aren't moons, silly. """
@@ -35,12 +55,14 @@ class Wormhole(PhysicsObject):
             offset.angle = 0
             ship.pose.add_pose(self.pose2 - self.pose + offset*2)
             ship.label_pose = ship.pose.copy()
+            ship.scale = 0
         if distance2 < self.radius and not ship in self.ships1:
             self.ships2.append(ship)
             offset = self.pose2-ship.pose
             offset.angle = 0
             ship.pose.add_pose(self.pose - self.pose2 + offset*2)
             ship.label_pose = ship.pose.copy()
+            ship.scale = 0
         if distance1 > self.radius and distance2 > self.radius:
             if ship in self.ships1:
                 self.ships1.remove(ship)
@@ -75,16 +97,29 @@ class Wormhole(PhysicsObject):
 
     def update(self, dt, events):
         self.age += dt
+        self.pose.angle += dt * self.velocity.angle
+        self.pose2.angle += dt * self.velocity.angle
 
     def draw(self, surf, offset=(0, 0)):
+
         x, y = self.pose.get_position()
         x += offset[0]
         y += offset[1]
         #pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
-        pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
+        speed = -1
+        for i, surface in enumerate(self.surfs):
+            surface = pygame.transform.rotate(surface, self.pose.angle * speed)
+            surf.blit(surface, (x - surface.get_width()//2, y - surface.get_height()//2))
+            speed *= -0.7
+
+        #pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
 
         x, y = self.pose2.get_position()
         x += offset[0]
         y += offset[1]
         #pygame.draw.circle(surf, (100, 100, 100), (x, y), self.gravity_radius, 2)
-        pygame.draw.circle(surf, (150, 50, 250), (x, y), self.radius)
+        speed = -1
+        for i, surface in enumerate(self.surfs):
+            surface = pygame.transform.rotate(surface, self.pose.angle * speed)
+            surf.blit(surface, (x - surface.get_width()//2, y - surface.get_height()//2))
+            speed *= -0.7
