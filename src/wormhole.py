@@ -29,7 +29,7 @@ class Wormhole(PhysicsObject):
         for i in range(4):
             new_surf = base.copy()
             new_surf.set_alpha(alpha)
-            alpha += (255 - alpha)/4
+            alpha += (255 - alpha)*0.28
             new_surf = pygame.transform.scale(new_surf,
                 (int(new_surf.get_width() * scale),
                 int(new_surf.get_height() * scale)))

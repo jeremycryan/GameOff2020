@@ -28,8 +28,15 @@ class AchievementRow(GameObject):
             self.achieved = False
             self.tags = [] if tags is None else tags
             self.requires = {} if requires is None else requires
+            self.blink = self.surface.copy()
+            self.blink.fill(c.WHITE)
+            self.blink.set_alpha(0)
+            self.blink_alpha = 0
 
         def update(self, dt, events):
+            self.blink_alpha -= 300 * dt
+            if self.blink_alpha < 0:
+                self.blink_alpha = 0
             pass
 
         def ship_can_score(self, ship):
@@ -67,12 +74,17 @@ class AchievementRow(GameObject):
 
             self.surface.blit(font_render, (x, y))
 
+            self.blink_alpha = 255
+
 
         def draw(self, surface, offset=(0, 0)):
             shake_offset = self.game.current_scene.apply_screenshake((0, 0))
             x = self.container.pose.x + offset[0]
             y = self.container.pose.y + offset[1]
             surface.blit(self.surface, (x, y))
+            if self.blink_alpha > 0:
+                self.blink.set_alpha(self.blink_alpha)
+                surface.blit(self.blink, (x, y))
 
 
     def __init__(self, game, top_left_position=(0, 0)):
