@@ -29,10 +29,10 @@ class Game:
         self.stream = Stream(channel="plasmastarfish")
         self.scoreboard = ScoreManager.from_file("test_scores.pkl")
         self.temp_scores = {}
-        if not len(self.scoreboard.scores):
-            self.scoreboard.add_score("N4tticus", 5000)
-            self.scoreboard.add_score("ZebulahCrimson", 3500)
-            self.scoreboard.add_score("superduperpacman42", 2500)
+        # if not len(self.scoreboard.scores):
+        #     self.scoreboard.add_score("N4tticus", 5000)
+        #     self.scoreboard.add_score("ZebulahCrimson", 3500)
+        #     self.scoreboard.add_score("superduperpacman42", 2500)
         self.last_snapshot = None
         self.players = {name:Player(self, name) for name in ["superduperpacman42"]}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)

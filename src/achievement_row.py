@@ -49,6 +49,9 @@ class AchievementRow(GameObject):
             return True
 
         def achieve(self, player):
+            if self.achieved:
+                return
+                
             self.achieved = True
             self.game.current_scene.shake(15)
 
