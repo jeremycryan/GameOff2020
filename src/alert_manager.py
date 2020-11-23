@@ -11,7 +11,10 @@ class Alert(GameObject):
         self.message = message
         self.player = player
         self.age = 0
-        self.lines = self.split(message)
+        if player:
+            self.lines = self.split(player + ": " + message)
+        else:
+            self.lines = self.split(message)
         self.surface = self.generate_surface().convert_alpha()
 
     def update(self, dt, events):
@@ -62,6 +65,12 @@ class Alert(GameObject):
         for i, line in enumerate(self.lines):
             y = c.ALERT_MARGIN[c.UP] + (c.PAUL_ALERT_LINE_SPACING + zero_height)*i
             surface.blit(self.game.other_alert_font.render(line, 1, c.ALERT_TEXT_COLOR), (x, y))
+        if self.player:
+            if self.player in self.game.players:
+                color = self.game.players[self.player].color
+            else:
+                color = c.ALERT_TEXT_COLOR
+            surface.blit(self.game.other_alert_font.render(self.player+": ", 1, color), (x, c.ALERT_MARGIN[c.UP]))
         return surface
 
     def get_alpha(self):

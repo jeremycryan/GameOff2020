@@ -77,10 +77,28 @@ class LevelScene(Scene):
         self.particles = {item for item in self.particles if not item.dead}
 
         for message in self.game.stream.queue_flush():
-            if Ship.parse_program(message.text) and not self.scene_over:
-                if message.user not in self.game.players:
-                    self.game.players[message.user] = Player(self.game, message.user)
-                self.spawn_ship(message.text, message.user)
+            if message.text.lower() == '!recolor':
+                if message.user in self.game.players:
+                    self.game.players[message.user].recolor()
+                    for ship in self.ships:
+                        if ship.player.name == message.user:
+                            ship.recolor()
+            elif message.text.lower() == '!score':
+                board = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)
+                if message.user in board:
+                    score = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)[message.user].score
+                    self.game.alertManager.alert("Your score is "+str(score), message.user)
+                else:
+                    self.game.alertManager.alert("You have not played in the last " + str(c.SCORE_EXPIRATION) + " hours", message.user)
+            elif message.text[0] == '!':
+                program, info = Ship.parse_program(message.text)
+                if not program:
+                    print("Error: " + info)
+                    self.game.alertManager.alert(info, message.user)
+                elif not self.scene_over:
+                    if message.user not in self.game.players:
+                        self.game.players[message.user] = Player(self.game, message.user)
+                    self.spawn_ship(message.text, message.user)
 
         shade_speed = 900
         if self.shade_alpha > 0 and not self.scene_over:

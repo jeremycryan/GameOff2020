@@ -124,7 +124,7 @@ class HighScoreRow(GameObject):
         surface.blit(self.tile, (x, y))
 
 class HighScoreTable(GameObject):
-    def __init__(self, game, hours_to_display=48):
+    def __init__(self, game, hours_to_display=c.SCORE_EXPIRATION):
         super().__init__(game)
         self.pose = Pose((c.WINDOW_WIDTH//2, c.WINDOW_HEIGHT//2), 0)
         self.title = f"High scores".upper()

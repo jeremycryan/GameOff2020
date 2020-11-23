@@ -77,6 +77,7 @@ TEXT_BLIT_OFFSETS = ((-TEXT_BLIT_WIDTH, 0),
                     (-TEXT_BLIT_WIDTH//2, -TEXT_BLIT_WIDTH//2))
 
 COMMANDS = {"thrust":'t', "delay":'d', "rotate":'r'}
+COMMANDS_LONG = {'t':"Thrust", 'd':"Delay", 'r':"Rotate"}
 COMMANDS_MIN = {'t':(0,), 'd':(0,), 'r':(-360,)}
 COMMANDS_MAX = {'t':(100,), 'd':(60000,), 'r':(360,)}
 THRUST = 2
@@ -113,6 +114,8 @@ ALERT_BACKGROUND_COLOR = BLACK
 ALERT_TEXT_COLOR = WHITE
 MAX_ALERT_HEIGHT = WINDOW_HEIGHT*0.65
 PAUL_ALERT_LINE_SPACING = 0
+
+SCORE_EXPIRATION = 48
 
 JOKE_MESSAGES = (
     "Help, I'm trapped in a spaceship factory! Please let me out before they send me to the moon...",

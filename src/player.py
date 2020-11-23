@@ -18,3 +18,6 @@ class Player:
         rgb = [a, b, c]
         random.shuffle(rgb)
         return tuple(rgb)
+
+    def recolor(self, color=None):
+        self.color = color if color is not None else self.random_color()

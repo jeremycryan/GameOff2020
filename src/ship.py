@@ -12,7 +12,7 @@ class Ship(PhysicsObject):
     def __init__(self, game, program_string, player, position=(0, 0), angle=90):
         super().__init__(game, position, angle)
         self.program_string = program_string
-        self.program = self.parse_program(program_string)
+        self.program, info = self.parse_program(program_string)
         self.player = player
         self.age = 0
         self.thrust = Pose((0,0), 0)
@@ -109,6 +109,20 @@ class Ship(PhysicsObject):
                 self.velocity.set_angle(command[1])
             self.commandIndex += 1
 
+    def recolor(self):
+        self.surface = self.get_surface()
+        self.label = self.game.player_label_font.render(self.player.name, 0, self.player.color)
+        self.way_surf = pygame.image.load(c.IMAGE_PATH + "/small_waypoint.png").convert()
+        h = self.label_back.get_height()
+        self.way_surf = pygame.transform.scale(self.way_surf, (h-2, h-2))
+        tint = self.way_surf.copy()
+        tint.fill(self.player.color)
+        self.way_surf.blit(tint, (0, 0), special_flags = pygame.BLEND_MULT)
+        self.way_surf.set_colorkey(self.way_surf.get_at((0, 0)))
+        self.way_back_surf = pygame.Surface((self.way_surf.get_width() + 5,self.label_back.get_height()))
+        self.way_back_surf.fill(c.BLACK)
+        self.way_back_surf.set_alpha(100)
+
     def draw(self, surface, offset=(0, 0)):
         if self.destroyed:
             return
@@ -144,7 +158,7 @@ class Ship(PhysicsObject):
 
     @staticmethod
     def parse_program(program_string):
-        program_string = program_string.lower().strip() + 'A'
+        program_string = program_string[1:].lower().strip() + 'A'
         program = []
         arguments = []
         key = ''
@@ -153,7 +167,7 @@ class Ship(PhysicsObject):
         for char in program_string:
             if char == '.':
                 print("Decimals not permitted")
-                return []
+                return [], "Decimals not permitted"
             elif char.isnumeric() or char == '-':
                 isNumber = True
                 number += char
@@ -164,8 +178,8 @@ class Ship(PhysicsObject):
                     arguments.append(int(number))
                     number = ''
                 elif number != '':
-                    print("Invalid number")
-                    return []
+                    print('Invalid number, "' + number + '"')
+                    return [], 'Invalid number, "' + number + '"'
                 # terminate previous command
                 if isNumber or char == 'A':
                     if key in c.COMMANDS.values():
@@ -173,18 +187,18 @@ class Ship(PhysicsObject):
                     elif key in c.COMMANDS:
                         command = c.COMMANDS[key]
                     else:
-                        print("Invalid command")
-                        return []
+                        print('Invalid command, "' + key + '"')
+                        return [], 'Invalid command, "' + key + '"'
                     if len(arguments) != len(c.COMMANDS_MIN[command]):
-                        print("Invalid number of arguments")
-                        return []
+                        print("Invalid number of arguments for " + c.COMMANDS_LONG[command])
+                        return [], "Invalid number of arguments for " + c.COMMANDS_LONG[command]
                     for i, arg in enumerate(arguments):
                         if arg < c.COMMANDS_MIN[command][i]:
-                            print("Argument was smaller than minimum value")
-                            return []
+                            print(c.COMMANDS_LONG[command] + " was smaller than minimum value")
+                            return [], c.COMMANDS_LONG[command] + " was smaller than minimum value"
                         if arg > c.COMMANDS_MAX[command][i]:
-                            print("Argument was greater than maximum value")
-                            return []
+                            print(c.COMMANDS_LONG[command] + " was greater than maximum value")
+                            return [], c.COMMANDS_LONG[command] + " was greater than maximum value"
                     program.append((command, *arguments))
                     key = ''
                     arguments = []
@@ -197,9 +211,9 @@ class Ship(PhysicsObject):
                     arguments.append(int(number))
                     number = ''
             else:
-                print("Invalid character")
-                return []
-        return program
+                print('Invalid character, "' + char + '"')
+                return [], 'Invalid character, "' + char + '"'
+        return program, None
 
 if __name__ == '__main__':
-    Ship.parse_program("t100 r9 d1000 t1")
+    Ship.parse_program("t100t120 t100")

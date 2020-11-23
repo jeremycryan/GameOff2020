@@ -75,7 +75,7 @@ class Game:
                 self.current_scene.lastLevel = self.current_scene.level
                 self.current_scene.spawn_level()
                 self.current_scene.ships = []
-                self.current_scene.spawn_ship("t100", "superduperpacman42")
+                self.current_scene.spawn_ship("!t100", "superduperpacman42")
             if event.type == pygame.KEYDOWN and event.key == pygame.K_a:
                 message = random.choice(c.JOKE_MESSAGES)
                 self.alertManager.alert(message)
