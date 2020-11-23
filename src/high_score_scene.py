@@ -41,6 +41,18 @@ class HighScoreScene(Scene):
         self.table.update(dt, events)
         self.side_gui.update(dt, events)
 
+        for message in self.game.stream.queue_flush():
+            if message.text.lower() == '!recolor':
+                if message.user in self.game.players:
+                    self.game.players[message.user].recolor()
+            elif message.text.lower() == '!score':
+                board = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)
+                if message.user in board:
+                    score = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)[message.user].score
+                    self.game.alertManager.alert("Your score is "+str(score), message.user)
+                else:
+                    self.game.alertManager.alert("You have not played in the last " + str(c.SCORE_EXPIRATION) + " hours", message.user)
+        
         speed = 800
         if self.scene_over:
             self.shade_alpha += speed*dt

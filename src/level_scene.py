@@ -30,7 +30,7 @@ class LevelScene(Scene):
         # self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["PlasmaStarfish"], (500, 200), 180),
         #               Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
         self.ships = []
-        self.spawn_ship("t100", "superduperpacman42")
+        self.spawn_ship("!t100", "superduperpacman42")
 
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
         self.side_panel = pygame.Surface(c.SIDE_PANEL_SIZE)
@@ -80,10 +80,28 @@ class LevelScene(Scene):
         self.particles = {item for item in self.particles if not item.dead}
 
         for message in self.game.stream.queue_flush():
-            if Ship.parse_program(message.text) and not self.scene_over:
-                if message.user not in self.game.players:
-                    self.game.players[message.user] = Player(self.game, message.user)
-                self.spawn_ship(message.text, message.user)
+            if message.text.lower() == '!recolor':
+                if message.user in self.game.players:
+                    self.game.players[message.user].recolor()
+                    for ship in self.ships:
+                        if ship.player.name == message.user:
+                            ship.recolor()
+            elif message.text.lower() == '!score':
+                board = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)
+                if message.user in board:
+                    score = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)[message.user].score
+                    self.game.alertManager.alert("Your score is "+str(score), message.user)
+                else:
+                    self.game.alertManager.alert("You have not played in the last " + str(c.SCORE_EXPIRATION) + " hours", message.user)
+            elif message.text[0] == '!':
+                program, info = Ship.parse_program(message.text)
+                if not program:
+                    print("Error: " + info)
+                    self.game.alertManager.alert(info, message.user)
+                elif not self.scene_over:
+                    if message.user not in self.game.players:
+                        self.game.players[message.user] = Player(self.game, message.user)
+                    self.spawn_ship(message.text, message.user)
 
         shade_speed = 900
         if self.shade_alpha > 0 and not self.scene_over:

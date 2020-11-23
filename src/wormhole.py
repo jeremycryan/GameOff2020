@@ -47,8 +47,8 @@ class Wormhole(PhysicsObject):
         """ Return a Pose indicating the acceleration to apply to
             the Ship.
         """
-        distance1 = self.pose.distance_to(ship.pose)
-        distance2 = self.pose2.distance_to(ship.pose)
+        distance1 = self.pose.distance_to(ship.pose) - ship.radius
+        distance2 = self.pose2.distance_to(ship.pose) - ship.radius
         if distance1 < self.radius and not ship in self.ships2:
             self.ships1.append(ship)
             offset = self.pose-ship.pose
