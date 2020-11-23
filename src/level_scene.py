@@ -19,18 +19,13 @@ from player import Player
 class LevelScene(Scene):
     def __init__(self, *args, lastLevel=None, **kwargs):
         super().__init__(*args, **kwargs)
-        # self.planets = [Planet(self.game, (200, 200)),
-        #                 Planet(self.game, (500, 500), radius=50),
-        #                 Moon(self.game, (800, 300)),
-        #                 Wormhole(self.game, (725, 500), (600, 250))]
+
         self.game.temp_scores = {}
         self.lastLevel = lastLevel
         self.game.players_in_last_round = set()
         self.spawn_level()
-        # self.ships = [Ship(self.game, "r90 t33 d200; t0 d500; r0 t33 d2000; r360 d260; r0 t33 d800; t0 d2500; t21 d1500; t0", self.game.players["PlasmaStarfish"], (500, 200), 180),
-        #               Ship(self.game, "t100 r180", self.game.players["superduperpacman42"], (500, 200), 180)]
+
         self.ships = []
-        self.spawn_ship("t100", "superduperpacman42")
 
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
         self.side_panel = pygame.Surface(c.SIDE_PANEL_SIZE)
@@ -47,6 +42,8 @@ class LevelScene(Scene):
         self.shade.fill(c.BLACK)
         self.shade_alpha = 255
         #self.timer_label = self.game.
+
+        self.instructions = pygame.image.load(c.IMAGE_PATH + "/instructions.png")
 
     def shake(self, amp=15):
         self.screenshake_amp = max(self.screenshake_amp, amp)
@@ -123,6 +120,8 @@ class LevelScene(Scene):
         self.achievement_row.draw(self.side_panel)
         self.draw_timer(self.side_panel, c.TIMER_POSITION)
         surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
+        surf.blit(self.instructions, (c.WINDOW_WIDTH - self.instructions.get_width(),
+                                      c.WINDOW_HEIGHT - self.instructions.get_height()))
 
         if self.shade_alpha > 0:
             self.shade.set_alpha(self.shade_alpha)
@@ -196,10 +195,10 @@ class LevelScene(Scene):
 
     def spawn_home_planet(self, home=None, clearance=c.MIN_SPACING+100):
         if not home:
-            home = self.get_edge()
+            home = self.get_edge(offset=c.HOME_PLANET_RADIUS//2)
         spawn_angle = self.get_angle(home, (c.LEVEL_WIDTH/2, c.LEVEL_HEIGHT/2))
-        spawn_x = home[0] + int(math.cos(spawn_angle)*(c.HOME_PLANET_RADIUS+35))
-        spawn_y = home[1] - int(math.sin(spawn_angle)*(c.HOME_PLANET_RADIUS+35))
+        spawn_x = home[0] + int(math.cos(spawn_angle)*(c.HOME_PLANET_RADIUS+c.SHIP_SPAWN_ALTITUDE))
+        spawn_y = home[1] - int(math.sin(spawn_angle)*(c.HOME_PLANET_RADIUS+c.SHIP_SPAWN_ALTITUDE))
         self.spawn_angle = math.degrees(spawn_angle)
         self.spawn_pos = (spawn_x, spawn_y)
         self.home_planet = Planet(self.game, home, angle=self.spawn_angle, radius=c.HOME_PLANET_RADIUS, home=True)

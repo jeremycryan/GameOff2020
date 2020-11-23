@@ -34,7 +34,7 @@ class Game:
         #     self.scoreboard.add_score("ZebulahCrimson", 3500)
         #     self.scoreboard.add_score("superduperpacman42", 2500)
         self.last_snapshot = None
-        self.players = {name:Player(self, name) for name in ["superduperpacman42"]}
+        self.players = {}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
         self.timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 55)
         self.small_timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 40)

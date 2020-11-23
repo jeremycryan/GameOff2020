@@ -21,7 +21,13 @@ class Planet(PhysicsObject):
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.7*radius
         self.mass = mass if mass is not None else radius ** 2
 
-        if self.radius > 50:
+        self.ship_surf = pygame.image.load(c.IMAGE_PATH + "/ship.png")
+        self.ship_surf.set_alpha(80)
+        self.ship_surf.set_colorkey(c.MAGENTA)
+
+        if self.home:
+            self.surface = pygame.image.load(c.IMAGE_PATH + "/earth.png")
+        elif self.radius > 50:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
         else:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/small_planet.png")
@@ -73,6 +79,7 @@ class Planet(PhysicsObject):
     def draw(self, surf, offset=(0, 0)):
         self.draw_back_shadow(surf, offset)
         my_surface = pygame.transform.rotate(self.surface, self.pose.angle)
+        ship = pygame.transform.rotate(self.ship_surf, self.pose.angle)
         x, y = self.pose.get_position()
         x += offset[0]
         y += offset[1]
@@ -81,6 +88,13 @@ class Planet(PhysicsObject):
         pygame.draw.circle(surf, c.BLACK, (x, y), self.radius+2, width=2)
         if not self.home:
             pass
+
+        if self.home:
+            r = c.HOME_PLANET_RADIUS + c.SHIP_SPAWN_ALTITUDE
+            x = self.pose.x + r * math.cos(self.pose.get_angle_radians()) + offset[0]
+            y = self.pose.y + r * -math.sin(self.pose.get_angle_radians()) + offset[1]
+            surf.blit(ship, (x - ship.get_width()//2, y - ship.get_height()//2))
+
             #self.draw_gravity_region(surf, offset)
         # pygame.draw.circle(surf, (200, 200, 200), (x, y), self.radius)
 
