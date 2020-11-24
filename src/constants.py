@@ -126,14 +126,16 @@ JOKE_MESSAGES = (
 
 HINTS = (
     "When reading your code, the game ignores spaces and semicolons. Feel free to use them to keep organized!",
-    "You can type !score to view your current score.\n(...or at least we intend to implement it!)",
+    "You can type !score to view your current score.",
+    "You can type !recolor to re-roll your player color.",
     "Your ship rotation is measured in degrees per second, so you can calculate precise turns with the right timing.",
+    "In real life, spacecraft of this size would be impractical.",
     "You only get points for an achievement if you're the first player to score it. Speed is important!",
     "This game was created by plasmastarfish and superduperpacman42 for the 2020 Github Game Off.\nIts source code is at github.com/jeremycryan.",
 )
 
 MULT_0_MESSAGES = (
-    "You can only score leaderboard points in games with three or more players.\n\nThis game had {num} players.",
+    "You can only score leaderboard points in games with three or more players.\n\nGrab some friends!",
 )
 
 MULT_MESSAGES = (

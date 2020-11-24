@@ -29,6 +29,7 @@ class Game:
         self.stream = Stream(channel="plasmastarfish")
         self.scoreboard = ScoreManager.from_file("test_scores.pkl")
         self.temp_scores = {}
+        self.modifications = []
         # if not len(self.scoreboard.scores):
         #     self.scoreboard.add_score("N4tticus", 5000)
         #     self.scoreboard.add_score("ZebulahCrimson", 3500)
@@ -44,6 +45,7 @@ class Game:
         self.small_font_render = {char:self.small_font.render(char, 0, c.WHITE) for char in string.printable}
         self.very_small_font = pygame.font.Font(c.FONT_PATH + "/a_goblin_appears.ttf", 7)
         self.scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 25)
+        self.voting_planet_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 26)
         self.small_scoreboard_font = pygame.font.Font(c.FONT_PATH + "/asap.otf", 16)
         self.scoreboard_title_font = pygame.font.Font(c.FONT_PATH + "/eras_demi_bold.ttf", 40)
         self.scoreboard_description_font = pygame.font.Font(c.FONT_PATH + "/eras_demi.ttf", 25)

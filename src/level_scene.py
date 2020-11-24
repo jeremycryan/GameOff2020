@@ -45,6 +45,10 @@ class LevelScene(Scene):
 
         self.instructions = pygame.image.load(c.IMAGE_PATH + "/instructions.png")
 
+        if self.game.modifications:
+            lowered = [mod.lower() for mod in self.game.modifications]
+            self.game.alertManager.alert(f"Modifications active: {', '.join(lowered)}")
+
     def shake(self, amp=15):
         self.screenshake_amp = max(self.screenshake_amp, amp)
         self.screenshake_time = 0
@@ -363,5 +367,6 @@ class LevelScene(Scene):
         multiplier = self.game.player_multiplier()
         for player_name in self.game.temp_scores:
             self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
+        self.game.modifications = []
         #self.game.alertManager.clear()
         return self.game.high_score_scene()

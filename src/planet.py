@@ -9,7 +9,7 @@ import constants as c
 from primitives import PhysicsObject, Pose
 
 class Planet(PhysicsObject):
-    def __init__(self, game, position, angle=None, radius=100, gravity_radius=None, mass=None, home=False):
+    def __init__(self, game, position, angle=None, radius=100, gravity_radius=None, mass=None, home=False, surf_det_size=None):
         if angle is None:
             angle = random.random()*360
         super().__init__(game, position, angle)
@@ -18,6 +18,8 @@ class Planet(PhysicsObject):
         if self.home:
             self.velocity.angle = 0
         self.radius = radius
+        if not surf_det_size:
+            surf_det_size = radius
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.7*radius
         self.mass = mass if mass is not None else radius ** 2
 
@@ -27,7 +29,7 @@ class Planet(PhysicsObject):
 
         if self.home:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/earth.png")
-        elif self.radius > 50:
+        elif surf_det_size > 50:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
         else:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/small_planet.png")

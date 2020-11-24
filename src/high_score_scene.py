@@ -52,7 +52,15 @@ class HighScoreScene(Scene):
                     self.game.alertManager.alert("Your score is "+str(score), message.user)
                 else:
                     self.game.alertManager.alert("You have not played in the last " + str(c.SCORE_EXPIRATION) + " hours", message.user)
-        
+            elif message.text.lower()[:5] == "!vote":
+                split = message.text.lower().split()
+                if len(split) != 2:
+                    self.game.alertManager.alert("Invalid number of arguments for !vote", message.user)
+                    continue
+                player_name = message.user
+                argument = split[1]
+                self.game.current_scene.side_gui.vote(player_name, argument)
+
         speed = 800
         if self.scene_over:
             self.shade_alpha += speed*dt
