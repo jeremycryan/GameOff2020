@@ -311,7 +311,8 @@ class TransitionGui(GameObject):
         self.add_player_mult_box()
         self.objects.append(Countdown(self.game, (0, c.WINDOW_HEIGHT*0.44)))
         self.countdown = self.objects[-1]
-        self.voting = VotingObject(self.game, self, (0, 0), ["Bigger planets", "Double points"])
+        mod_options = random.sample(c.MODIFICATIONS, 2)
+        self.voting = VotingObject(self.game, self, (0, 0), mod_options)
         self.objects.append(self.voting)
 
     def countdown_over(self):

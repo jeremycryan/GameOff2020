@@ -141,3 +141,19 @@ MULT_0_MESSAGES = (
 MULT_MESSAGES = (
     "The more players in the game, the more points are scored by achievements!\n\nThis game had {num} players.",
 )
+
+BIG_PLANETS_MOD = "Bigger planets"
+NO_PLANETS_MOD = "No planets"
+DOUBLE_POINTS_MOD = "Double points"
+DOUBLE_THRUST_MOD = "Double thrust"
+INVERTED_GRAVITY_MOD = "Inverted gravity"
+EXTRA_TIME_MOD = "Extra time"
+
+MODIFICATIONS = (
+    BIG_PLANETS_MOD,
+    NO_PLANETS_MOD,
+    DOUBLE_POINTS_MOD,
+    DOUBLE_THRUST_MOD,
+    INVERTED_GRAVITY_MOD,
+    EXTRA_TIME_MOD,
+)
