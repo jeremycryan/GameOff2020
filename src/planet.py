@@ -70,6 +70,8 @@ class Planet(PhysicsObject):
         gravity_vector = (self.pose - ship.pose)
         gravity_vector.set_angle(0)
         gravity_vector.scale_to(gravity_magnitude)
+        if c.INVERTED_GRAVITY_MOD in self.game.modifications:
+            return gravity_vector * -1
         return gravity_vector
 
     def collide_with_ship(self, ship):

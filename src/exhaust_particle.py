@@ -11,6 +11,8 @@ class ExhaustParticle(Particle):
         super().__init__(game)
         self.ship = ship
         size = 18
+        if c.DOUBLE_THRUST_MOD in self.game.modifications:
+            size *= 1.5
         self.surface = pygame.Surface((size, size))
         self.surface.fill(c.BLACK)
         self.surface.set_colorkey(c.BLACK)

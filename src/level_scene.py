@@ -54,7 +54,10 @@ class LevelScene(Scene):
         self.screenshake_time = 0
 
     def round_length(self):
-        return 10 # minutes
+        if c.EXTRA_TIME_MOD in self.game.modifications:
+            return 12
+        else:
+            return 10 # minutes
 
     def apply_screenshake(self, offset):
         x = offset[0] + self.screenshake_amp * math.cos(self.screenshake_time * 24)
@@ -193,7 +196,9 @@ class LevelScene(Scene):
         self.nuggets = []
         self.spawn_home_planet()
         self.spawn_moon()
-        if level == "giant":
+        if c.NO_PLANETS_MOD in self.game.modifications:
+            self.spawn_waypoint(2)
+        elif level == "giant":
             self.add_planet(rmin=120, rmax=150, clearance=c.MIN_SPACING+50, border=300)
             self.spawn_waypoint(2)
             if random.random() < 0.3:

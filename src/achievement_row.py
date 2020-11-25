@@ -24,6 +24,8 @@ class AchievementRow(GameObject):
                                                   (c.ACHIEVEMENT_WIDTH,
                                                   surface.get_height())).convert()
             self.points = points
+            if c.DOUBLE_POINTS_MOD in self.game.modifications:
+                self.points *= 2
             self.description = description
             self.achieved = False
             self.tags = [] if tags is None else tags
@@ -51,7 +53,7 @@ class AchievementRow(GameObject):
         def achieve(self, player):
             if self.achieved:
                 return
-                
+
             self.achieved = True
             self.game.current_scene.shake(15)
 

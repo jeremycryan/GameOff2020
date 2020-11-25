@@ -77,6 +77,8 @@ class Ship(PhysicsObject):
         self.runCommands(dt)
         self.acceleration.clear()
         self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
+        if c.DOUBLE_THRUST_MOD in self.game.modifications:
+            self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
         for planet in self.game.current_scene.planets:
             self.acceleration.add_pose(planet.get_acceleration(self))
         for nugget in self.game.current_scene.nuggets:
