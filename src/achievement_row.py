@@ -134,6 +134,9 @@ class AchievementRow(GameObject):
         for item in self.achievements:
             item.update(dt, events)
 
+    def get_height(self):
+        return self.label.get_height() + self.body.get_height()
+
     def draw_box(self, surface, offset=(0, 0)):
         x = self.pose.x + offset[0]
         y = self.pose.y + offset[1]

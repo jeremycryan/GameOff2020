@@ -37,7 +37,7 @@ class Ship(PhysicsObject):
         self.way_surf = pygame.transform.scale(self.way_surf, (h-2, h-2))
         tint = self.way_surf.copy()
         tint.fill(self.player.color)
-        self.way_surf.blit(tint, (0, 0), special_flags = pygame.BLEND_MULT)
+        self.way_surf.blit(tint, (0, 0), special_flags=pygame.BLEND_MULT)
         self.way_surf.set_colorkey(self.way_surf.get_at((0, 0)))
         self.way_back_surf = pygame.Surface((self.way_surf.get_width() + 5,self.label_back.get_height()))
         self.way_back_surf.fill(c.BLACK)
@@ -48,6 +48,16 @@ class Ship(PhysicsObject):
 
         self.nuggets = set()
         self.has_hit_moon = False
+
+        if self.player.name in self.game.player_flags:
+            self.flag_surf = self.game.player_flags[self.player.name]
+        else:
+            self.flag_surf = pygame.image.load(c.IMAGE_PATH  + "/flag.png").convert()
+            tint = pygame.Surface((self.flag_surf.get_width(), self.flag_surf.get_height()))
+            tint.fill(self.player.color)
+            self.flag_surf.blit(tint, (0, 0), special_flags=pygame.BLEND_MULT)
+            self.flag_surf.set_colorkey(self.flag_surf.get_at((0, 0)))
+            self.game.player_flags[self.player.name] = self.flag_surf
 
     def get_surface(self):
         surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()

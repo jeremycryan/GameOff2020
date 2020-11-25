@@ -29,7 +29,8 @@ class LevelScene(Scene):
 
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
         self.side_panel = pygame.Surface(c.SIDE_PANEL_SIZE)
-        self.achievement_row = AchievementRow(self.game, (0, 80))
+        self.achievement_row = AchievementRow(self.game, (0, 0))
+        self.achievement_row.pose.y = c.WINDOW_HEIGHT - self.achievement_row.get_height()
         self.alignment = c.LEFT, c.DOWN
         self.offset = self.get_initial_offset()
         self.particles = set()
@@ -90,6 +91,7 @@ class LevelScene(Scene):
                     for ship in self.ships:
                         if ship.player.name == message.user:
                             ship.recolor()
+                    self.game.recolor_flag(message.user)
             elif message.text.lower() == '!score':
                 board = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)
                 if message.user in board:
@@ -146,7 +148,7 @@ class LevelScene(Scene):
         self.draw_timer(self.side_panel, c.TIMER_POSITION)
         surf.blit(self.side_panel, (c.LEVEL_WIDTH, 0))
         surf.blit(self.instructions, (c.WINDOW_WIDTH - self.instructions.get_width(),
-                                      c.WINDOW_HEIGHT - self.instructions.get_height()))
+                                      80))
 
         if self.shade_alpha > 0:
             self.shade.set_alpha(self.shade_alpha)

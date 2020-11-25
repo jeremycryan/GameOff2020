@@ -36,6 +36,7 @@ class Game:
         #     self.scoreboard.add_score("superduperpacman42", 2500)
         self.last_snapshot = None
         self.players = {}
+        self.player_flags = {}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
         self.timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 55)
         self.small_timer_font = pygame.font.Font(c.FONT_PATH + "/asap-bold.otf", 40)
@@ -127,6 +128,16 @@ class Game:
             return 2
         else:
             return 3
+
+    def recolor_flag(self, player_name):
+        player = self.players[player_name]
+        player_flag = self.player_flags[player.name]
+        flag = pygame.image.load(c.IMAGE_PATH  + "/flag.png")
+        player_flag.blit(flag, (0, 0))
+        tint = pygame.Surface((flag.get_width(), flag.get_height()))
+        tint.fill(player.color)
+        player_flag.blit(tint, (0, 0), special_flags=pygame.BLEND_MULT)
+        player_flag.set_colorkey(player_flag.get_at((0, 0)))
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

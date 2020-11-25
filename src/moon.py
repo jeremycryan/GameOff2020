@@ -15,10 +15,24 @@ class Moon(Planet):
         self.surface = pygame.image.load(c.IMAGE_PATH + "/moon.png")
         self.glow = pygame.image.load(c.IMAGE_PATH + "/moonglow.png")
         self.glow.set_alpha(50)
+        self.flags = []
+        self.flag_angles = []
 
     def draw(self, surface, offset=(0, 0)):
+        self.draw_flags(surface, offset)
         self.draw_glow(surface, offset)
         super().draw(surface, offset)
+
+    def draw_flags(self, surface, offset=(0, 0)):
+        for flag, angle in zip(self.flags, self.flag_angles):
+            angle = angle + self.pose.angle
+            flag_surf = pygame.transform.rotate(flag, angle)
+            dist = self.radius + flag.get_width()//2
+            xoff = math.cos(angle*math.pi/180) * dist
+            yoff = -math.sin(angle*math.pi/180) * dist
+            x = xoff + offset[0] + self.pose.x - flag_surf.get_width()//2
+            y = yoff + offset[1] + self.pose.y - flag_surf.get_height()//2
+            surface.blit(flag_surf, (x, y))
 
     def draw_glow(self, surface, offset=(0, 0)):
         scale = math.sin(self.age * math.pi) * 0.08 + 0.92
@@ -37,11 +51,17 @@ class Moon(Planet):
             self.game.current_scene.ships.remove(ship)
             for i in range(5):
                 self.game.current_scene.particles.add(DeathParticle(self.game, ship))
-            self.sprout_flag(ship)
+            self.game.current_scene.shake(10)
+            if not self.game.player_flags[ship.player.name] in self.flags:
+                self.sprout_flag(ship)
 
     def sprout_flag(self, ship):
-        # not implemented yet, unfortunately
-        pass
+        self.flags.append(ship.flag_surf)
+
+        dx = ship.pose.x - self.pose.x
+        dy = ship.pose.y - self.pose.y
+        angle = math.atan2(-dy, dx)
+        self.flag_angles.append(angle*180/math.pi - self.pose.angle)
 
     def is_moon(self):
         return True

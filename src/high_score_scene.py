@@ -45,6 +45,7 @@ class HighScoreScene(Scene):
             if message.text.lower() == '!recolor':
                 if message.user in self.game.players:
                     self.game.players[message.user].recolor()
+                    self.game.recolor_flag(message.user)
             elif message.text.lower() == '!score':
                 board = self.game.scoreboard.get_total_by_player(c.SCORE_EXPIRATION)
                 if message.user in board:

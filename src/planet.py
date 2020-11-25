@@ -13,6 +13,7 @@ class Planet(PhysicsObject):
         if angle is None:
             angle = random.random()*360
         super().__init__(game, position, angle)
+        self.graphic_pose = self.pose.copy()
         self.home = home
         self.velocity.angle = 15
         if self.home:
@@ -30,10 +31,13 @@ class Planet(PhysicsObject):
         if self.home:
             self.surface = pygame.image.load(c.IMAGE_PATH + "/earth.png")
         elif surf_det_size > 50:
-            self.surface = pygame.image.load(c.IMAGE_PATH + "/large_planet.png")
+            rel = random.choice(["large_planet.png", "large_planet_2.png"])
+            self.surface = pygame.image.load(c.IMAGE_PATH + f"/{rel}")
         else:
-            self.surface = pygame.image.load(c.IMAGE_PATH + "/small_planet.png")
+            rel = random.choice(["small_planet.png", "small_planet_2.png"])
+            self.surface = pygame.image.load(f"{c.IMAGE_PATH}/{rel}")
         self.surface = pygame.transform.scale(self.surface, (radius*2, radius*2))
+        self.surface.set_colorkey(c.BLACK)
         self.shadow = pygame.image.load(c.IMAGE_PATH + "/planet_shadow.png")
         self.shadow = pygame.transform.scale(self.shadow,
                                             (self.surface.get_width(),
@@ -76,6 +80,7 @@ class Planet(PhysicsObject):
 
     def collide_with_ship(self, ship):
         ship.destroy()
+        self.splatter(ship)
 
     def overlaps(self, pose, r, clearance):
         return pose.distance_to(self.pose) < self.radius + r + max(clearance, self.clearance)
@@ -84,7 +89,7 @@ class Planet(PhysicsObject):
         self.draw_back_shadow(surf, offset)
         my_surface = pygame.transform.rotate(self.surface, self.pose.angle)
         ship = pygame.transform.rotate(self.ship_surf, self.pose.angle)
-        x, y = self.pose.get_position()
+        x, y = self.graphic_pose.get_position()
         x += offset[0]
         y += offset[1]
         surf.blit(my_surface, (x - my_surface.get_width()//2, y - my_surface.get_height()//2))
@@ -110,7 +115,30 @@ class Planet(PhysicsObject):
 
     def update(self, dt, events):
         super().update(dt, events)
+        pdiff = self.pose - self.graphic_pose            
+        self.graphic_pose += pdiff * dt * 6
         self.age += dt
+
+    def align_graphic_pose(self):
+        self.graphic_pose = self.pose.copy()
+
+    def splatter(self, ship):
+        d = ship.pose - self.pose
+        self.graphic_pose -= d*(25/d.magnitude())
+        d.rotate_position(-self.pose.angle)
+        vpos = 10
+        vrad = 12
+        for i in range(15):
+            x = d.x + 2 * random.random()**2 * vpos - vpos + self.surface.get_width()//2
+            y = d.y + 2 * random.random()**2 * vpos - vpos + self.surface.get_height()//2
+            radius = 18 + 2 * random.random() * vrad - vrad
+            surf = pygame.Surface((radius*2, radius*2))
+            surf.fill(c.WHITE)
+            pygame.draw.circle(surf, c.VERT_LIGHT_GRAY, (radius, radius), radius)
+            self.surface.blit(surf,
+                              (x - surf.get_width()//2,
+                              y - surf.get_height()//2),
+                              special_flags=pygame.BLEND_MULT)
 
     def draw_gravity_region(self, surf, offset=(0, 0)):
         if self.home:

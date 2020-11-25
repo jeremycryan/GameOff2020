@@ -206,6 +206,7 @@ class VotingObject(GameObject):
         y = offset[1]
         planet.pose.x = x
         planet.pose.y = y
+        planet.align_graphic_pose()
         planet.draw(surface)
         surface.blit(self.cover, (x - self.cover.get_width()//2, y - self.cover.get_height()//2))
         texts = [self.game.voting_planet_font.render(text, 0, c.BLACK) for text in self.option_strings[option_key].split()]
