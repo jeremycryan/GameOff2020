@@ -87,6 +87,7 @@ LOG_PATH = "error_log.txt"
 SCORE_SAVE_PATH = "../data"
 IMAGE_PATH = "../images"
 FONT_PATH = "../fonts"
+CONFIG_PATH = "../config"
 
 GRAVITY_CONSTANT = 800
 
@@ -148,6 +149,9 @@ DOUBLE_POINTS_MOD = "Double points"         # TODO add visual change
 DOUBLE_THRUST_MOD = "Double thrust"
 INVERTED_GRAVITY_MOD = "Inverted gravity"   # TODO add visual change
 EXTRA_TIME_MOD = "Extra time"
+MANY_WORMHOLES_MOD = "Many wormholes"
+GIANT_PLANET_MOD = "Giant planets"
+SMALL_PLANETS_MOD = "Small planets"
 
 MODIFICATIONS = (
     NO_PLANETS_MOD,
@@ -155,4 +159,12 @@ MODIFICATIONS = (
     DOUBLE_THRUST_MOD,
     INVERTED_GRAVITY_MOD,
     EXTRA_TIME_MOD,
+    MANY_WORMHOLES_MOD,
+    GIANT_PLANET_MOD,
+    SMALL_PLANETS_MOD
 )
+
+PARTICIPATION_POINTS = 50
+
+PARTICIPATION = 0
+OBJECTIVE = 1

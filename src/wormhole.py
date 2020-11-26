@@ -49,7 +49,9 @@ class Wormhole(PhysicsObject):
         """
         distance1 = self.pose.distance_to(ship.pose) - ship.radius
         distance2 = self.pose2.distance_to(ship.pose) - ship.radius
+        freeze_length = 0.35
         if distance1 < self.radius and not ship in self.ships2:
+            ship.freeze(freeze_length)
             self.ships1.append(ship)
             offset = self.pose-ship.pose
             offset.angle = 0
@@ -57,6 +59,7 @@ class Wormhole(PhysicsObject):
             ship.label_pose = ship.pose.copy()
             ship.scale = 0
         if distance2 < self.radius and not ship in self.ships1:
+            ship.freeze(freeze_length)
             self.ships2.append(ship)
             offset = self.pose2-ship.pose
             offset.angle = 0
@@ -69,7 +72,7 @@ class Wormhole(PhysicsObject):
             if ship in self.ships2:
                 self.ships2.remove(ship)
 
-        if distance1 == 0 or distance2 == 0:
+        if distance1 == 0 or distance2 == 0 or ship.is_frozen():
             return Pose((0, 0), 0)
         if distance1 < self.gravity_radius:
             gravity_magnitude = self.mass * c.GRAVITY_CONSTANT / distance1**2

@@ -19,8 +19,11 @@ class HighScoreScene(Scene):
             if player not in [item.name for item in self.game.scoreboard.scores]:
                 self.game.scoreboard.add_score(player, 0)
 
+        self.board_offset = -c.WINDOW_HEIGHT
         self.table = HighScoreTable(self.game)
+        self.table_all = HighScoreTable(self.game, hours_to_display=10**9)
         self.table.pose.x = c.WINDOW_WIDTH * 0.3
+        self.table_all.pose.x = self.table.pose.x
         self.age = 0
         self.shade = pygame.Surface(c.WINDOW_SIZE)
         self.shade.fill(c.BLACK)
@@ -33,12 +36,21 @@ class HighScoreScene(Scene):
 
     def update(self, dt, events):
         self.age += dt
+
+        if self.age > 15 and self.board_offset < 0:
+            speed = 4
+            d = abs(self.board_offset)
+            self.board_offset += min(d * dt * speed, c.WINDOW_HEIGHT*dt*2)
+            if self.board_offset > 0:
+                self.board_offset = 0
+
         for event in events:
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 self.scene_over = True
         if self.side_gui.countdown_over():
             self.scene_over = True
         self.table.update(dt, events)
+        self.table_all.update(dt, events)
         self.side_gui.update(dt, events)
 
         for message in self.game.stream.queue_flush():
@@ -74,7 +86,9 @@ class HighScoreScene(Scene):
 
     def draw(self, surface, offset=(0, 0)):
         surface.fill(c.BLACK)
-        self.table.draw(surface, offset)
+        surface.blit(self.table.background_surface, (0, 0))
+        self.table.draw(surface, (offset[0], offset[1] + self.board_offset + c.WINDOW_HEIGHT))
+        self.table_all.draw(surface, (offset[0], offset[1] + self.board_offset))
         self.side_gui.draw(surface, offset)
 
         if self.shade_alpha > 0:

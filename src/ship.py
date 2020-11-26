@@ -7,6 +7,7 @@ from player import Player
 from exhaust_particle import ExhaustParticle
 from explosion import Explosion
 from death_particle import DeathParticle
+from wormhole_explosion import WormholeExplosion
 
 class Ship(PhysicsObject):
     def __init__(self, game, program_string, player, position=(0, 0), angle=90):
@@ -59,6 +60,20 @@ class Ship(PhysicsObject):
             self.flag_surf.set_colorkey(self.flag_surf.get_at((0, 0)))
             self.game.player_flags[self.player.name] = self.flag_surf
 
+        self.frozen_for = 0
+        self.last = False
+
+    def freeze(self, amt):
+        self.frozen_for = amt
+        self.game.current_scene.particles.add(WormholeExplosion(self.game, self))
+
+    def is_frozen(self):
+        frozen = self.frozen_for > 0
+        if not frozen and self.last:
+            self.game.current_scene.particles.add(WormholeExplosion(self.game, self))
+        self.last = frozen
+        return frozen
+
     def get_surface(self):
         surface = pygame.image.load(c.IMAGE_PATH + "/ship.png").convert()
         color_surf = pygame.Surface((surface.get_width(), surface.get_height()))
@@ -75,8 +90,11 @@ class Ship(PhysicsObject):
         self.game.current_scene.shake(20)
 
     def update(self, dt, events):
-        super().update(dt, events)
         self.age += dt
+        self.frozen_for -= dt
+        if self.is_frozen():
+            return
+        super().update(dt, events)
         self.since_exhaust += dt
         exhaust_period = 0.05
         if self.since_exhaust > exhaust_period:
@@ -146,7 +164,8 @@ class Ship(PhysicsObject):
 
         x = self.label_pose.x + offset[0] - self.label_back.get_width()//2 - len(self.nuggets) * self.way_back_surf.get_width()//2
         y = self.label_pose.y + offset[1] - self.label_back.get_height()//2
-        surface.blit(self.label_back, (x, y))
+        if not self.is_frozen():
+            surface.blit(self.label_back, (x, y))
         x += self.label_back.get_width()
         for item in self.nuggets:
             surface.blit(self.way_back_surf, (x, y))
@@ -155,7 +174,8 @@ class Ship(PhysicsObject):
 
         x = self.label_pose.x + offset[0] - self.label.get_width()//2  - len(self.nuggets) * self.way_back_surf.get_width()//2
         y = self.label_pose.y + offset[1] - self.label.get_height()//2
-        surface.blit(self.label, (x, y))
+        if not self.is_frozen():
+            surface.blit(self.label, (x, y))
 
         if self.scale == 0:
             return

@@ -25,6 +25,12 @@ class LevelScene(Scene):
         self.game.players_in_last_round = set()
         self.spawn_level()
 
+        self.home_planet = None
+        for item in self.planets:
+            if item.home:
+                self.home_planet = item
+                break
+
         self.ships = []
 
         self.surface = pygame.Surface((c.LEVEL_WIDTH, c.LEVEL_HEIGHT))
@@ -42,6 +48,7 @@ class LevelScene(Scene):
         self.shade = pygame.Surface(c.WINDOW_SIZE)
         self.shade.fill(c.BLACK)
         self.shade_alpha = 255
+        self.shade.set_colorkey(c.MAGENTA)
         #self.timer_label = self.game.
 
         self.instructions = pygame.image.load(c.IMAGE_PATH + "/instructions.png")
@@ -111,8 +118,20 @@ class LevelScene(Scene):
 
         shade_speed = 900
         if self.shade_alpha > 0 and not self.scene_over:
-            self.shade_alpha = max(0, self.shade_alpha - shade_speed * dt)
+            center = (self.home_planet.pose.x, self.home_planet.pose.y)
+            hold_rad = 100
+            pause = 0.3
+            radius = max(
+                max((self.age - pause + 0.1), 0)**2.5 * c.WINDOW_WIDTH,
+                min((1 - (1 - self.age/pause)**3)*hold_rad, hold_rad)
+            )
+            if radius < c.WINDOW_WIDTH * 1.4:
+                pygame.draw.circle(self.shade, c.MAGENTA, center, radius)
+            else:
+                self.shade_alpha = 0
         elif self.shade_alpha < 255 and self.scene_over:
+            if not self.shade.get_at((0, 0))[:3] == c.BLACK:
+                self.shade.fill(c.BLACK)
             self.shade_alpha = min(255, self.shade_alpha + shade_speed * dt)
 
         if self.age > self.round_length() * 60:
@@ -185,13 +204,21 @@ class LevelScene(Scene):
         return (x, y)
 
     def spawn_level(self, level=None):
-        if not level:
-            levels = ["giant", "small", "wormhole", "default"]
-            weights = [1, 2, 1, 4]
-            if self.lastLevel in levels and self.lastLevel != "default":
-                i = levels.index(self.lastLevel)
-                weights[i] = 0
-            level = random.choices(levels, weights)[0]
+        # if not level:
+        #     levels = ["giant", "small", "wormhole", "default"]
+        #     weights = [1, 2, 1, 3]
+        #     if self.lastLevel in levels and self.lastLevel != "default":
+        #         i = levels.index(self.lastLevel)
+        #         weights[i] = 0
+        #     level = random.choices(levels, weights)[0]
+        if c.GIANT_PLANET_MOD in self.game.modifications:
+            level = "giant"
+        elif c.MANY_WORMHOLES_MOD in self.game.modifications:
+            level = "wormhole"
+        elif c.SMALL_PLANETS_MOD in self.game.modifications:
+            level = "small"
+        else:
+            level = "default"
         self.level = level
         #print("Level type: " + level)
         self.planets = []
@@ -200,27 +227,29 @@ class LevelScene(Scene):
         self.spawn_moon()
         if c.NO_PLANETS_MOD in self.game.modifications:
             self.spawn_waypoint(2)
+            if random.random() < 0.5:
+                self.add_wormhole()
         elif level == "giant":
             self.add_planet(rmin=120, rmax=150, clearance=c.MIN_SPACING+50, border=300)
             self.spawn_waypoint(2)
             if random.random() < 0.3:
                 self.add_wormhole()
-            self.add_planet(n=10)
+            self.add_planet(n=7)
         elif level == "small":
             self.spawn_waypoint(2)
             if random.random() < 0.3:
                 self.add_wormhole()
-            self.add_planet(rmax=50, n=25)
+            self.add_planet(rmax=50, n=20)
         elif level == "wormhole":
             self.spawn_waypoint(2)
             for i in range(4):
                 self.add_wormhole()
-            self.add_planet(n=10)
+            self.add_planet(n=7)
         else:
             self.spawn_waypoint(2)
             if random.random() < 0.3:
                 self.add_wormhole()
-            self.add_planet(n=random.randint(8,15))
+            self.add_planet(n=random.randint(7,12))
 
     def spawn_home_planet(self, home=None, clearance=c.MIN_SPACING+100):
         if not home:
@@ -374,6 +403,8 @@ class LevelScene(Scene):
         multiplier = self.game.player_multiplier()
         for player_name in self.game.temp_scores:
             self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
+        for player_name in self.game.players:
+            self.game.scoreboard.add_score(player_name, c.PARTICIPATION_POINTS * multiplier)
         self.game.modifications = []
         #self.game.alertManager.clear()
         return self.game.high_score_scene()

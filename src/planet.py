@@ -38,6 +38,10 @@ class Planet(PhysicsObject):
             self.surface = pygame.image.load(f"{c.IMAGE_PATH}/{rel}")
         self.surface = pygame.transform.scale(self.surface, (radius*2, radius*2))
         self.surface.set_colorkey(c.BLACK)
+        self.mask_surf = self.surface.copy()
+        self.mask_surf.fill(c.MAGENTA)
+        pygame.draw.circle(self.mask_surf, c.WHITE, (radius, radius), radius)
+        self.mask_surf.set_colorkey(c.WHITE)
         self.shadow = pygame.image.load(c.IMAGE_PATH + "/planet_shadow.png")
         self.shadow = pygame.transform.scale(self.shadow,
                                             (self.surface.get_width(),
@@ -63,6 +67,8 @@ class Planet(PhysicsObject):
         """ Return a Pose indicating the acceleration to apply to
             the Ship.
         """
+        if ship.is_frozen():
+            return Pose((0, 0), 0)
         distance = self.pose.distance_to(ship.pose)
         if distance > self.gravity_radius:
             return Pose((0, 0), 0)
@@ -115,7 +121,7 @@ class Planet(PhysicsObject):
 
     def update(self, dt, events):
         super().update(dt, events)
-        pdiff = self.pose - self.graphic_pose            
+        pdiff = self.pose - self.graphic_pose
         self.graphic_pose += pdiff * dt * 6
         self.age += dt
 
@@ -139,6 +145,8 @@ class Planet(PhysicsObject):
                               (x - surf.get_width()//2,
                               y - surf.get_height()//2),
                               special_flags=pygame.BLEND_MULT)
+        self.surface.blit(self.mask_surf, (0, 0))
+        self.surface.set_colorkey(c.MAGENTA)
 
     def draw_gravity_region(self, surf, offset=(0, 0)):
         if self.home:

@@ -13,7 +13,7 @@ src/error_log.txt
 *.prof
 
 # Test scores
-data/test_scores.pkl
+data/*.pkl
 
 # Distribution / packaging
 .Python

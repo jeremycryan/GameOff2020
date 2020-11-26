@@ -126,9 +126,12 @@ class HighScoreRow(GameObject):
 class HighScoreTable(GameObject):
     def __init__(self, game, hours_to_display=c.SCORE_EXPIRATION):
         super().__init__(game)
+        self.all_time = hours_to_display >= 10**6
         self.pose = Pose((c.WINDOW_WIDTH//2, c.WINDOW_HEIGHT//2), 0)
         self.title = f"High scores".upper()
         self.description = f"Last {hours_to_display} hours".upper()
+        if self.all_time:
+            self.description = "all time".upper()
         snapshot_dict = self.game.scoreboard.get_total_by_player(hours_to_display)
         self.rows = 10
         self.last_snapshot = self.game.last_snapshot
@@ -149,6 +152,7 @@ class HighScoreTable(GameObject):
             (self.width - c.SCORE_TABLE_PADDING*2,
             self.height - c.SCORE_TABLE_PADDING*2))
         self.title_surf, self.description_surf = self.table_title_surfaces()
+        self.hours = hours_to_display
         self.age = 0
 
     def add_missing_players(self):
@@ -231,14 +235,13 @@ class HighScoreTable(GameObject):
         height = self.height - c.SCORE_TABLE_PADDING*2
         width = self.width - c.SCORE_TABLE_PADDING*2
         yoffset = 32
-        x = width//2
+        x = width//2 + offset[0]
         y = height//2 - (c.SCORE_ROW_HEIGHT * len(self.rows))//2 + c.SCORE_ROW_HEIGHT//2 + yoffset
         y_title = y - yoffset + math.sin(self.age * 3) * 2
-        back_surf = self.background_surface.copy()
         #pygame.draw.rect(back_surf, c.SCORE_TABLE_COLOR, (x - width//2, y - c.SCORE_TABLE_PADDING - c.SCORE_ROW_HEIGHT//2, width, height))
         for row in self.rows:
-            row.draw(back_surf, (x, y))
+            row.draw(surface, (x, y + offset[1]))
             y += row.height()
-        back_surf.blit(self.title_surf, (x-self.title_surf.get_width()//2, y_title - 52 - self.title_surf.get_height()//2))
-        back_surf.blit(self.description_surf, (x-self.description_surf.get_width()//2, y_title - 22 - self.description_surf.get_height()//2))
-        surface.blit(back_surf, (c.SCORE_TABLE_PADDING, c.SCORE_TABLE_PADDING))
+        surface.blit(self.title_surf, (x-self.title_surf.get_width()//2, y_title - 52 - self.title_surf.get_height()//2 + offset[1]))
+        surface.blit(self.description_surf, (x-self.description_surf.get_width()//2, y_title - 22 - self.description_surf.get_height()//2 + offset[1]))
+        #surface.blit(back_surf, (c.SCORE_TABLE_PADDING + offset[0], c.SCORE_TABLE_PADDING + offset[1]))

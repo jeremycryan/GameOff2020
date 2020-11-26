@@ -5,6 +5,7 @@ import string
 import random
 
 import pygame
+import yaml
 
 import constants as c
 from error_logging import error_logging
@@ -26,8 +27,9 @@ class Game:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
         self.clock = pygame.time.Clock()
         self.players_in_last_round = set()
-        self.stream = Stream(channel="plasmastarfish")
-        self.scoreboard = ScoreManager.from_file("test_scores.pkl")
+        self.config = self.get_config()
+        self.stream = Stream(channel=self.config["channel"])
+        self.scoreboard = ScoreManager.from_file(self.config["scoreboard_file"])
         self.temp_scores = {}
         self.modifications = []
         # if not len(self.scoreboard.scores):
@@ -93,6 +95,10 @@ class Game:
             pass
         pygame.quit()
         sys.exit()
+
+    def get_config(self):
+        with open(c.CONFIG_PATH + "/config.yaml", "r") as f:
+            return yaml.load(f.read(), Loader=yaml.Loader)
 
     def update_screen(self):
         """ Update the pygame display.
