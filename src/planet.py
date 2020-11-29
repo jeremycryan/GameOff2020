@@ -7,6 +7,7 @@ import pygame
 
 import constants as c
 from primitives import PhysicsObject, Pose
+from planet_explosion import PlanetExplosion
 
 class Planet(PhysicsObject):
     def __init__(self, game, position, angle=None, radius=100, gravity_radius=None, mass=None, home=False, surf_det_size=None):
@@ -58,6 +59,7 @@ class Planet(PhysicsObject):
         self.back_shadow.set_alpha(80)
         self.back_shadow.set_colorkey(c.WHITE)
         self.age = 0
+        self.destroyed = False
 
     def is_moon(self):
         """ Planets aren't moons, silly. """
@@ -124,6 +126,13 @@ class Planet(PhysicsObject):
         pdiff = self.pose - self.graphic_pose
         self.graphic_pose += pdiff * dt * 6
         self.age += dt
+        if self.age > 3 and not self.destroyed:
+            self.destroy()
+
+    def destroy(self):
+        self.destroyed = True
+        if hasattr(self.game.current_scene, "particles"):
+            self.game.current_scene.particles.add(PlanetExplosion(self.game, self))
 
     def align_graphic_pose(self):
         self.graphic_pose = self.pose.copy()
