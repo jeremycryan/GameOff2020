@@ -30,8 +30,10 @@ class HighScoreScene(Scene):
         self.shade_alpha = 255
         self.scene_over = False
         self.side_gui = TransitionGui(self.game)
+        pygame.mixer.music.set_volume(0.25)
 
     def next_scene(self):
+        pygame.mixer.music.set_volume(1.0)
         return LevelScene(self.game)
 
     def update(self, dt, events):

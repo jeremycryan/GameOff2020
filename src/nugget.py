@@ -54,6 +54,7 @@ class Nugget(PhysicsObject):
         ship.nuggets.add(self)
         self.game.current_scene.particles.add(NuggetExplosion(self.game, self))
         self.alpha = 25
+        self.game.waypoint_collect_sound.play()
 
     def overlaps(self, pose, r, clearance):
         return pose.distance_to(self.pose) < self.radius + r + max(clearance, self.clearance)

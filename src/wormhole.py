@@ -49,7 +49,7 @@ class Wormhole(PhysicsObject):
         """
         distance1 = self.pose.distance_to(ship.pose) - ship.radius
         distance2 = self.pose2.distance_to(ship.pose) - ship.radius
-        freeze_length = 0.35
+        freeze_length = 0.4
         if distance1 < self.radius and not ship in self.ships2:
             ship.freeze(freeze_length)
             self.ships1.append(ship)

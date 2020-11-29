@@ -23,6 +23,7 @@ class Game:
         pygame.init()
         pygame.mixer.music.load(c.SOUNDS_PATH + "/music.wav")
         pygame.mixer.music.play(loops=-1)
+        self.load_sounds()
         if c.FULLSCREEN:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
         else:
@@ -146,6 +147,16 @@ class Game:
         tint.fill(player.color)
         player_flag.blit(tint, (0, 0), special_flags=pygame.BLEND_MULT)
         player_flag.set_colorkey(player_flag.get_at((0, 0)))
+
+    def load_sounds(self):
+        self.ship_destroy_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/ship_destroy.wav")
+        self.ship_destroy_sound.set_volume(0.4)
+        self.waypoint_collect_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/waypoint_collect.wav")
+        self.waypoint_collect_sound.set_volume(0.8)
+        self.use_wormhole_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/use_wormhole.wav")
+        self.use_wormhole_sound.set_volume(0.3)
+        self.vote_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/vote.wav")
+        self.vote_sound.set_volume(0.4)
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

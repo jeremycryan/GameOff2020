@@ -12,6 +12,7 @@ class WormholeExplosion(Particle):
         self.pose = ship.pose.copy()
         self.start_radius = 16
         self.duration = 0.5
+        self.game.use_wormhole_sound.play()
 
     def get_scale(self):
         return 1 + self.through(loading=1.5) * 2.5

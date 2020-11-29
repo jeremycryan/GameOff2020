@@ -88,6 +88,7 @@ class Ship(PhysicsObject):
         for i in range(8):
             self.game.current_scene.particles.add(DeathParticle(self.game, self))
         self.game.current_scene.shake(20)
+        self.game.ship_destroy_sound.play()
 
     def update(self, dt, events):
         self.age += dt

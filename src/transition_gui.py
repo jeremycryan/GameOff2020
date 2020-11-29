@@ -337,6 +337,7 @@ class TransitionGui(GameObject):
         self.objects.append(PlayerMultiplierAlertBox(self.game, position, header, body))
 
     def vote(self, player, option):
+        self.game.vote_sound.play()
         return self.voting.vote(player, option)
 
     def update(self, dt, events):
