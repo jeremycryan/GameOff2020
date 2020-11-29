@@ -21,6 +21,8 @@ from alert_manager import AlertManager
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.music.load(c.SOUNDS_PATH + "/music.wav")
+        pygame.mixer.music.play(loops=-1)
         if c.FULLSCREEN:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
         else:

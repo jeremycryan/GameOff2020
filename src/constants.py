@@ -88,6 +88,7 @@ SCORE_SAVE_PATH = "../data"
 IMAGE_PATH = "../images"
 FONT_PATH = "../fonts"
 CONFIG_PATH = "../config"
+SOUNDS_PATH = "../sounds"
 
 GRAVITY_CONSTANT = 800
 
