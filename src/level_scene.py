@@ -52,6 +52,8 @@ class LevelScene(Scene):
         self.shade.set_colorkey(c.MAGENTA)
         #self.timer_label = self.game.
 
+        self.since_sh = 99
+
         self.instructions = pygame.image.load(c.IMAGE_PATH + "/instructions.png")
 
         if self.game.modifications:
@@ -79,11 +81,15 @@ class LevelScene(Scene):
     def update(self, dt, events):
         self.age += dt
 
+        self.since_sh += dt
         self.screenshake_time += dt
         self.screenshake_amp *= 0.001**dt
         self.screenshake_amp = max(0, self.screenshake_amp - 20*dt)
 
         if c.SOLAR_WIND in self.game.modifications:
+            if self.since_sh > 0.75:
+                self.game.solar_wind_sound.play()
+                self.since_sh = 0
             self.particles.add(WindParticle(self.game))
 
         for ship in self.ships[::-1]:
@@ -110,6 +116,8 @@ class LevelScene(Scene):
                     self.game.alertManager.alert("Your score is "+str(score), message.user)
                 else:
                     self.game.alertManager.alert("You have not played in the last " + str(c.SCORE_EXPIRATION) + " hours", message.user)
+            elif message.text.lower()[:5] == "!vote":
+                pass
             elif message.text[0] == '!':
                 program, info = Ship.parse_program(message.text)
                 if not program:
@@ -418,4 +426,5 @@ class LevelScene(Scene):
             self.game.scoreboard.add_score(player_name, c.PARTICIPATION_POINTS * multiplier)
         self.game.modifications = []
         #self.game.alertManager.clear()
+        self.game.solar_wind_sound.fadeout(500)
         return self.game.high_score_scene()

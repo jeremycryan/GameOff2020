@@ -158,6 +158,10 @@ class Game:
         self.use_wormhole_sound.set_volume(0.4)
         self.vote_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/vote.wav")
         self.vote_sound.set_volume(0.4)
+        self.solar_wind_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/solar_wind.wav")
+        self.solar_wind_sound.set_volume(0.025)
+        self.land_on_moon_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/land_on_moon.wav")
+        self.land_on_moon_sound.set_volume(0.5)
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

@@ -47,7 +47,8 @@ class WindParticle(Particle):
 
     def update(self, dt, events):
         super().update(dt, events)
-        self.pose += self.velocity * dt
+        self.pose.x += self.velocity.x * dt
+        self.pose.y += self.velocity.y * dt
         if self.pose.x > c.WINDOW_WIDTH + self.destroy_margin or \
             self.pose.y > c.WINDOW_HEIGHT + self.destroy_margin or \
             self.pose.x < -self.destroy_margin or \

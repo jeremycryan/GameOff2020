@@ -161,11 +161,12 @@ class Planet(PhysicsObject):
         pixels_each = 8
         dots = int((360 * pixels_per_degree / pixels_each)/10 * 10)
         angle_offset = self.age * 15 / radius
+        color = c.GRAY if not c.INVERTED_GRAVITY_MOD in self.game.modifications else (200, 50, 50)
         for i in range(dots):
             angle_rad = 2 * math.pi * i/dots + (angle_offset)
             my_radius = radius + math.sin(i) * 3
             pygame.draw.circle(surf,
-                            c.GRAY,
+                            color,
                             (x + my_radius * math.sin(angle_rad), y + my_radius * -math.cos(angle_rad)),
                             1)
 

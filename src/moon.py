@@ -54,6 +54,7 @@ class Moon(Planet):
             self.game.current_scene.shake(10)
             if not self.game.player_flags[ship.player.name] in self.flags:
                 self.sprout_flag(ship)
+            self.game.land_on_moon_sound.play()
 
     def sprout_flag(self, ship):
         self.flags.append(ship.flag_surf)
