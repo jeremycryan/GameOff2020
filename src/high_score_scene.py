@@ -9,9 +9,6 @@ from high_score_table import HighScoreTable
 from transition_gui import TransitionGui
 
 class HighScoreScene(Scene):
-    # TODO implement this class
-    # TODO if time, add "modifier" voting
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 

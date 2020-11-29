@@ -1,2 +1,3 @@
 channel: plasmastarfish
 scoreboard_file: scoreboard.pkl
+fullscreen: False

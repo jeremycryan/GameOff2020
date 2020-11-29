@@ -21,20 +21,21 @@ from alert_manager import AlertManager
 class Game:
     def __init__(self):
         pygame.init()
+        self.config = self.get_config()
         pygame.mixer.music.load(c.SOUNDS_PATH + "/music.wav")
         pygame.mixer.music.play(loops=-1)
         self.load_sounds()
-        if c.FULLSCREEN:
+        if self.config["fullscreen"]:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE, pygame.FULLSCREEN)
         else:
             self.screen = pygame.display.set_mode(c.WINDOW_SIZE)
+        pygame.display.set_caption(c.WINDOW_CAPTION)
         self.clock = pygame.time.Clock()
         self.players_in_last_round = set()
-        self.config = self.get_config()
         self.stream = Stream(channel=self.config["channel"])
         self.scoreboard = ScoreManager.from_file(self.config["scoreboard_file"])
         self.temp_scores = {}
-        self.modifications = []
+        self.modifications = [c.SOLAR_WIND]
         # if not len(self.scoreboard.scores):
         #     self.scoreboard.add_score("N4tticus", 5000)
         #     self.scoreboard.add_score("ZebulahCrimson", 3500)
@@ -154,7 +155,7 @@ class Game:
         self.waypoint_collect_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/waypoint_collect.wav")
         self.waypoint_collect_sound.set_volume(0.8)
         self.use_wormhole_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/use_wormhole.wav")
-        self.use_wormhole_sound.set_volume(0.3)
+        self.use_wormhole_sound.set_volume(0.4)
         self.vote_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/vote.wav")
         self.vote_sound.set_volume(0.4)
 

@@ -1,6 +1,9 @@
 ##!/usr/bin/env python3
 
+import random
+
 import pygame
+
 import constants as c
 from primitives import PhysicsObject, Pose
 from player import Player
@@ -105,6 +108,11 @@ class Ship(PhysicsObject):
             self.delay = max(0, self.delay-dt)
         self.runCommands(dt)
         self.acceleration.clear()
+        if c.SOLAR_WIND in self.game.modifications:
+            if not hasattr(self.game, "solar_wind_direction"):
+                self.game.solar_wind_direction = random.choice((c.UP, c.DOWN, c.LEFT, c.RIGHT))
+            wind_accel = Pose((self.game.solar_wind_direction), 0)
+            self.acceleration += wind_accel * c.WIND_STRENGTH
         self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
         if c.DOUBLE_THRUST_MOD in self.game.modifications:
             self.acceleration.add_pose(self.thrust, 1, frame=self.pose)
@@ -168,10 +176,11 @@ class Ship(PhysicsObject):
         if not self.is_frozen():
             surface.blit(self.label_back, (x, y))
         x += self.label_back.get_width()
-        for item in self.nuggets:
-            surface.blit(self.way_back_surf, (x, y))
-            surface.blit(self.way_surf, (x, y+1))
-            x += self.way_back_surf.get_width()
+        if not self.is_frozen():
+            for item in self.nuggets:
+                surface.blit(self.way_back_surf, (x, y))
+                surface.blit(self.way_surf, (x, y+1))
+                x += self.way_back_surf.get_width()
 
         x = self.label_pose.x + offset[0] - self.label.get_width()//2  - len(self.nuggets) * self.way_back_surf.get_width()//2
         y = self.label_pose.y + offset[1] - self.label.get_height()//2

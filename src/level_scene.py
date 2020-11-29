@@ -15,6 +15,7 @@ from primitives import Pose
 from achievement_row import AchievementRow
 from nugget import Nugget
 from player import Player
+from wind_particle import WindParticle
 
 class LevelScene(Scene):
     def __init__(self, *args, lastLevel=None, **kwargs):
@@ -82,6 +83,9 @@ class LevelScene(Scene):
         self.screenshake_amp *= 0.001**dt
         self.screenshake_amp = max(0, self.screenshake_amp - 20*dt)
 
+        if c.SOLAR_WIND in self.game.modifications:
+            self.particles.add(WindParticle(self.game))
+
         for ship in self.ships[::-1]:
             if ship.destroyed:
                 self.ships.remove(ship)
@@ -147,9 +151,13 @@ class LevelScene(Scene):
 
     def draw(self, surf, offset=(0, 0)):
         offset_with_shake = self.apply_screenshake(offset)
-        surf.fill(c.BLACK)
-        self.surface.fill(c.DARK_GRAY)
-        #self.draw_lines()      # TODO make background more interesting but not so laggy
+        #surf.fill(c.BLACK)
+        if not c.SOLAR_WIND in self.game.modifications:
+            self.surface.fill(c.DARK_GRAY)
+        else:
+            color = (65 - math.sin(self.age*2)*8, 35, 30)
+            self.surface.fill(color)
+        self.draw_lines()      # TODO make background more interesting but not so laggy
         for planet in self.planets:
             planet.draw_gravity_region(self.surface, offset_with_shake)
         for planet in self.planets:
@@ -175,13 +183,16 @@ class LevelScene(Scene):
 
     def draw_lines(self):
         border = 15
-        line_period = 80
-        line_width = 50
+        line_period = 40
+        line_width = 5
         offset = (self.age * 25) % line_period
         x = - c.WINDOW_HEIGHT - border + offset
         y_low = c.WINDOW_HEIGHT + border
         y_high = - border
         y_height = y_low - y_high
+        color = c.DARKER_GRAY
+        if c.SOLAR_WIND in self.game.modifications:
+            return
         while x < c.WINDOW_WIDTH + border:
             pygame.draw.line(self.surface,
                              c.DARKER_GRAY,

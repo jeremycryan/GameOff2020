@@ -199,6 +199,8 @@ class VotingObject(GameObject):
 
         modification = self.option_strings[self.picked]
         self.game.modifications.append(modification)
+        if modification is c.SOLAR_WIND:
+            self.game.solar_wind_direction = random.choice([c.UP, c.DOWN, c.LEFT, c.RIGHT])
 
     def draw_option(self, option_key, surface, offset=(0, 0)):
         planet = self.planet_dict[option_key]

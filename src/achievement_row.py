@@ -122,7 +122,7 @@ class AchievementRow(GameObject):
             AchievementRow.AchievementPanel(self.game,
                 self,
                 pygame.image.load(c.IMAGE_PATH + "/achievement_3.png"),
-                2000,
+                2500,
                 "2 things and land on moon",
                 requires={c.MOON:True, c.NUGGET:2},
                 tags=[c.MOON_2_NUGGET_ACH])
