@@ -246,27 +246,27 @@ class LevelScene(Scene):
         self.spawn_moon()
         if c.NO_PLANETS_MOD in self.game.modifications:
             self.spawn_waypoint(2)
-            if random.random() < 0.5:
+            if random.random() < 0.35:
                 self.add_wormhole()
         elif level == "giant":
             self.add_planet(rmin=120, rmax=150, clearance=c.MIN_SPACING+50, border=300)
             self.spawn_waypoint(2)
-            if random.random() < 0.3:
+            if random.random() < 0.35:
                 self.add_wormhole()
             self.add_planet(n=7)
         elif level == "small":
             self.spawn_waypoint(2)
-            if random.random() < 0.3:
+            if random.random() < 0.35:
                 self.add_wormhole()
             self.add_planet(rmax=50, n=20)
         elif level == "wormhole":
             self.spawn_waypoint(2)
             for i in range(4):
-                self.add_wormhole()
+                self.add_wormhole(color=i)
             self.add_planet(n=7)
         else:
             self.spawn_waypoint(2)
-            if random.random() < 0.3:
+            if random.random() < 0.35:
                 self.add_wormhole()
             self.add_planet(n=random.randint(7,12))
 
@@ -372,7 +372,7 @@ class LevelScene(Scene):
                     break
         return True
 
-    def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING):
+    def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING, color=-1):
         for i in range(100):
             p = self.get_point(border=100)
             pos1 = self.get_viable_point(20, clearance, point=p)
@@ -387,7 +387,7 @@ class LevelScene(Scene):
                 break
         if not pos2:
             return
-        w = Wormhole(self.game, pos1, pos2)
+        w = Wormhole(self.game, pos1, pos2, color=color)
         w.clearance = clearance
         self.planets.append(w)
 
