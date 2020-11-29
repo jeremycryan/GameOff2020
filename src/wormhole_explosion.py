@@ -13,6 +13,7 @@ class WormholeExplosion(Particle):
         self.start_radius = 16
         self.duration = 0.5
         self.game.use_wormhole_sound.play()
+        self.color = ship.lastWormhole.color
 
     def get_scale(self):
         return 1 + self.through(loading=1.5) * 2.5
@@ -28,10 +29,10 @@ class WormholeExplosion(Particle):
         surf = pygame.Surface((radius*2, radius*2))
         surf.fill(c.BLACK)
         surf.set_colorkey(c.BLACK)
-        color = 198, 59, 211
-        r = 255 - self.through(loading=2.5) * (255 - color[0])
-        g = 255 - self.through(loading=2.5) * (255 - color[1])
-        b = 255 - self.through(loading=2.5) * (255 - color[2])
+        # color = 198, 59, 211
+        r = 255 - self.through(loading=2.5) * (255 - self.color[0])
+        g = 255 - self.through(loading=2.5) * (255 - self.color[1])
+        b = 255 - self.through(loading=2.5) * (255 - self.color[2])
 
         pygame.draw.circle(surf, (r, g, b), (radius, radius), radius)
         x = self.pose.x - offset[0] - surf.get_width()//2

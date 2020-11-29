@@ -1,13 +1,14 @@
 ##!/usr/bin/env python3
 
 import pygame
+import random
 
 import constants as c
 from primitives import PhysicsObject, Pose
 from planet import Planet
 
 class Wormhole(PhysicsObject):
-    def __init__(self, game, position1, position2, angle=0, radius=20, gravity_radius=None, mass=None):
+    def __init__(self, game, position1, position2, angle=0, radius=20, gravity_radius=None, mass=None, color=-1):
         super().__init__(game, position1, angle)
         self.pose2 = Pose(position2, 0)
         self.home = False
@@ -18,13 +19,19 @@ class Wormhole(PhysicsObject):
         self.ships1 = []
         self.ships2 = []
         self.age = 0
+        if color == -1:
+            color = random.randint(0, 3)
+        self.color = c.WORMHOLE_COLORS[color]
         self.surfs = self.get_surfs()
 
     def get_surfs(self):
         surfs = []
         alpha = 40
-        base = pygame.image.load(c.IMAGE_PATH + "/wormhole.png")
-        base.set_colorkey(c.YELLOW)
+        base = pygame.image.load(c.IMAGE_PATH + "/wormhole.png").convert()
+        tint = base.copy()
+        tint.fill(self.color)
+        base.blit(tint, (0, 0), special_flags = pygame.BLEND_MULT)
+        base.set_colorkey(base.get_at((0, 0)))
         scale = 1
         for i in range(4):
             new_surf = base.copy()
@@ -51,6 +58,7 @@ class Wormhole(PhysicsObject):
         distance2 = self.pose2.distance_to(ship.pose) - ship.radius
         freeze_length = 0.4
         if distance1 < self.radius and not ship in self.ships2:
+            ship.lastWormhole = self
             ship.freeze(freeze_length)
             self.ships1.append(ship)
             offset = self.pose-ship.pose
@@ -59,6 +67,7 @@ class Wormhole(PhysicsObject):
             ship.label_pose = ship.pose.copy()
             ship.scale = 0
         if distance2 < self.radius and not ship in self.ships1:
+            ship.lastWormhole = self
             ship.freeze(freeze_length)
             self.ships2.append(ship)
             offset = self.pose2-ship.pose
