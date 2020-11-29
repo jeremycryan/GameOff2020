@@ -274,6 +274,7 @@ class LevelScene(Scene):
         if not home:
             home = self.get_edge(offset=c.HOME_PLANET_RADIUS//2)
         spawn_angle = self.get_angle(home, (c.LEVEL_WIDTH/2, c.LEVEL_HEIGHT/2))
+        spawn_angle += (2 * random.random() - 1) * c.HOME_ANGLE_VARIATION * math.pi/180
         spawn_x = home[0] + int(math.cos(spawn_angle)*(c.HOME_PLANET_RADIUS+c.SHIP_SPAWN_ALTITUDE))
         spawn_y = home[1] - int(math.sin(spawn_angle)*(c.HOME_PLANET_RADIUS+c.SHIP_SPAWN_ALTITUDE))
         self.spawn_angle = math.degrees(spawn_angle)
