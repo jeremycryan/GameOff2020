@@ -12,6 +12,7 @@ class Wormhole(PhysicsObject):
         super().__init__(game, position1, angle)
         self.pose2 = Pose(position2, 0)
         self.home = False
+        self.destroyed = False
         self.velocity.angle = -100
         self.radius = radius
         self.gravity_radius = gravity_radius if gravity_radius is not None else 2.5*radius
