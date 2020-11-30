@@ -43,6 +43,7 @@ class LevelScene(Scene):
         self.particles = set()
         self.screenshake_time = 0
         self.screenshake_amp = 0
+        self.exploded_planets = 0
         self.age = 0
         self.scene_over = False
 
@@ -91,6 +92,13 @@ class LevelScene(Scene):
                 self.game.solar_wind_sound.play()
                 self.since_sh = 0
             self.particles.add(WindParticle(self.game))
+
+        if c.EXPLODING_PLANETS in self.game.modifications:
+            if self.age > (self.exploded_planets+1)*c.PLANET_EXPLODE_RATE and len(self.planets) > 2:
+                self.exploded_planets += 1
+                i = random.randint(2, len(self.planets)-1)
+                if not isinstance(self.planets[i], Wormhole):
+                    self.planets[i].destroy()
 
         for ship in self.ships[::-1]:
             if ship.destroyed:
@@ -166,6 +174,9 @@ class LevelScene(Scene):
             color = (65 - math.sin(self.age*2)*8, 35, 30)
             self.surface.fill(color)
         self.draw_lines()      # TODO make background more interesting but not so laggy
+        for planet in self.planets[:]:
+            if planet.destroyed:
+                self.planets.remove(planet)
         for planet in self.planets:
             planet.draw_gravity_region(self.surface, offset_with_shake)
         for planet in self.planets:
