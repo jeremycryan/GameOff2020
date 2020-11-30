@@ -372,7 +372,7 @@ class LevelScene(Scene):
                     break
         return True
 
-    def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING, color=-1):
+    def add_wormhole(self, min_travel=300, clearance=c.MIN_SPACING, color=3):
         for i in range(100):
             p = self.get_point(border=100)
             pos1 = self.get_viable_point(20, clearance, point=p)
@@ -423,8 +423,8 @@ class LevelScene(Scene):
         multiplier = self.game.player_multiplier()
         for player_name in self.game.temp_scores:
             self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
-        for player_name in self.game.players:
-            self.game.scoreboard.add_score(player_name, c.PARTICIPATION_POINTS * multiplier)
+        for player in self.game.players_in_last_round:
+            self.game.scoreboard.add_score(player.name, c.PARTICIPATION_POINTS * multiplier)
         self.game.modifications = []
         #self.game.alertManager.clear()
         self.game.solar_wind_sound.fadeout(500)

@@ -126,8 +126,8 @@ class Planet(PhysicsObject):
         pdiff = self.pose - self.graphic_pose
         self.graphic_pose += pdiff * dt * 6
         self.age += dt
-        if self.age > 3 and not self.destroyed:
-            self.destroy()
+        # if self.age > 3 and not self.destroyed:
+        #     self.destroy()
 
     def destroy(self):
         self.destroyed = True

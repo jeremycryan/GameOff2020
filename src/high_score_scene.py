@@ -36,7 +36,7 @@ class HighScoreScene(Scene):
     def update(self, dt, events):
         self.age += dt
 
-        if self.age > 15 and self.board_offset < 0:
+        if self.age > 25 and self.board_offset < 0:
             speed = 4
             d = abs(self.board_offset)
             self.board_offset += min(d * dt * speed, c.WINDOW_HEIGHT*dt*2)

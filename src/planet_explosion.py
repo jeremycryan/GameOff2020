@@ -47,13 +47,13 @@ class PlanetExplosion(Particle):
         self.pose = planet.pose.copy()
         self.start_radius = planet.radius
         self.duration = 1
-        self.subparticles = {PlanetParticle(self.game, self.planet) for i in range(10)}
+        self.subparticles = {PlanetParticle(self.game, self.planet) for i in range(12)}
 
     def get_scale(self):
         return 1 + self.through(loading=3) * 2.5
 
     def get_alpha(self):
-        return 255 * (1 - self.through(loading=4))
+        return 150 * (1 - self.through(loading=4))
 
     def update(self, dt, events):
         super().update(dt, events)

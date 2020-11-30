@@ -27,10 +27,14 @@ class Wormhole(PhysicsObject):
     def get_surfs(self):
         surfs = []
         alpha = 40
-        base = pygame.image.load(c.IMAGE_PATH + "/wormhole.png").convert()
-        tint = base.copy()
-        tint.fill(self.color)
-        base.blit(tint, (0, 0), special_flags = pygame.BLEND_MULT)
+        if self.color != c.WORMHOLE_COLORS[3] and self.color != c.WORMHOLE_COLORS[0]:
+            base = pygame.image.load(c.IMAGE_PATH + "/wormhole_bw.png").convert()
+        else:
+            base = pygame.image.load(c.IMAGE_PATH + "/wormhole.png").convert()
+        if self.color != c.WORMHOLE_COLORS[3]:
+            tint = base.copy()
+            tint.fill(self.color)
+            base.blit(tint, (0, 0), special_flags = pygame.BLEND_MULT)
         base.set_colorkey(base.get_at((0, 0)))
         scale = 1
         for i in range(4):

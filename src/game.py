@@ -35,7 +35,7 @@ class Game:
         self.stream = Stream(channel=self.config["channel"])
         self.scoreboard = ScoreManager.from_file(self.config["scoreboard_file"])
         self.temp_scores = {}
-        self.modifications = []
+        self.modifications = [c.MANY_WORMHOLES_MOD]
         # if not len(self.scoreboard.scores):
         #     self.scoreboard.add_score("N4tticus", 5000)
         #     self.scoreboard.add_score("ZebulahCrimson", 3500)

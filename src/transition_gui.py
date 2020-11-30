@@ -267,7 +267,7 @@ class VotingObject(GameObject):
 class Countdown(GameObject):
     def __init__(self, game, position):
         super().__init__(game)
-        self.duration = 30.999  # seconds
+        self.duration = 50.999  # seconds
         self.pose = Pose(position, 0)
         self.color = (100, 110, 135)
 
