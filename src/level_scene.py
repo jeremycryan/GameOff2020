@@ -99,6 +99,7 @@ class LevelScene(Scene):
                 i = random.randint(2, len(self.planets)-1)
                 if not isinstance(self.planets[i], Wormhole):
                     self.planets[i].destroy()
+                    self.game.current_scene.shake(25)
 
         for ship in self.ships[::-1]:
             if ship.destroyed:
