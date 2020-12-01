@@ -106,9 +106,9 @@ class Game:
             This can also be used as a hook to add game-wide
             display objects, like an FPS monitor.
         """
-        fps_text = f"FPS: {int(sum(self.fps)/len(self.fps))}"
-        self.screen.blit(self.small_font.render(fps_text, 0, c.BLACK), (10, 10))
-        self.screen.blit(self.small_font.render(fps_text, 0, c.WHITE), (8, 9))
+        # fps_text = f"FPS: {int(sum(self.fps)/len(self.fps))}"
+        # self.screen.blit(self.small_font.render(fps_text, 0, c.BLACK), (10, 10))
+        # self.screen.blit(self.small_font.render(fps_text, 0, c.WHITE), (8, 9))
         self.alertManager.draw(self.screen)
         pygame.display.flip()
 
@@ -161,7 +161,7 @@ class Game:
         self.planet_explode_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/planet_explode.wav")
         self.planet_explode_sound.set_volume(0.45)
         self.alert_appears_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/alert_appears.wav")
-        self.alert_appears_sound.set_volume(0.05)
+        self.alert_appears_sound.set_volume(0.03)
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

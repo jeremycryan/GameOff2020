@@ -155,8 +155,9 @@ class LevelScene(Scene):
                 self.shade.fill(c.BLACK)
             self.shade_alpha = min(255, self.shade_alpha + shade_speed * dt)
 
-        if self.age > self.round_length() * 60:
+        if self.age > self.round_length() * 60 and not self.scene_over:
             self.scene_over = True
+            self.game.alertManager.alert("Time's up!")
         if self.achievement_row.all_scored():
             self.scene_over = True
         for event in events:
