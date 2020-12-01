@@ -36,11 +36,7 @@ class Game:
         self.scoreboard = ScoreManager.from_file(self.config["scoreboard_file"])
         self.temp_scores = {}
         self.modifications = []
-        # if not len(self.scoreboard.scores):
-        #     self.scoreboard.add_score("N4tticus", 5000)
-        #     self.scoreboard.add_score("ZebulahCrimson", 3500)
-        #     self.scoreboard.add_score("superduperpacman42", 2500)
-        self.last_snapshot = None
+        self.last_snapshot = {}
         self.players = {}
         self.player_flags = {}
         self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)

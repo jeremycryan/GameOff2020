@@ -134,9 +134,9 @@ class HighScoreTable(GameObject):
             self.description = "all time".upper()
         snapshot_dict = self.game.scoreboard.get_total_by_player(hours_to_display)
         self.rows = 10
-        self.last_snapshot = self.game.last_snapshot
+        self.last_snapshot = self.game.last_snapshot.get(hours_to_display, None)
         self.snapshot = self.dict_to_sorted_list(snapshot_dict)
-        self.game.last_snapshot = self.snapshot
+        self.game.last_snapshot[hours_to_display] = self.snapshot
         self.player_names = [item[0] for item in self.snapshot[:self.rows] if item[0] != c.EMPTY]
         self.add_missing_players()
         self.player_names += [c.EMPTY for i in range(self.rows - len(self.player_names))]
