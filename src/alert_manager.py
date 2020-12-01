@@ -99,6 +99,7 @@ class AlertManager(GameObject):
     def alert(self, message, player=None):
         self.alerts.append(Alert(self.game, message, player))
         self.yoff += self.alerts[-1].surface.get_height() + c.ALERT_PADDING[c.UP] + c.ALERT_PADDING[c.DOWN]
+        self.game.alert_appears_sound.play()
 
     def draw(self, surface):
         x = c.ALERT_PADDING[c.LEFT]

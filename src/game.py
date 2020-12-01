@@ -35,7 +35,7 @@ class Game:
         self.stream = Stream(channel=self.config["channel"])
         self.scoreboard = ScoreManager.from_file(self.config["scoreboard_file"])
         self.temp_scores = {}
-        self.modifications = []
+        self.modifications = [c.EXPLODING_PLANETS]
         self.last_snapshot = {}
         self.players = {}
         self.player_flags = {}
@@ -158,6 +158,10 @@ class Game:
         self.solar_wind_sound.set_volume(0.025)
         self.land_on_moon_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/land_on_moon.wav")
         self.land_on_moon_sound.set_volume(0.5)
+        self.planet_explode_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/planet_explode.wav")
+        self.planet_explode_sound.set_volume(0.45)
+        self.alert_appears_sound = pygame.mixer.Sound(c.SOUNDS_PATH + "/alert_appears.wav")
+        self.alert_appears_sound.set_volume(0.05)
 
 if __name__ == '__main__':
     with error_logging(c.LOG_PATH):

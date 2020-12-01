@@ -130,7 +130,7 @@ class LevelScene(Scene):
             elif message.text[0] == '!':
                 program, info = Ship.parse_program(message.text)
                 if not program:
-                    print("Error: " + info)
+                    #print("Error: " + info)
                     self.game.alertManager.alert(info, message.user)
                 elif not self.scene_over:
                     if message.user not in self.game.players:
@@ -437,7 +437,6 @@ class LevelScene(Scene):
             self.game.scoreboard.add_score(player_name, self.game.temp_scores[player_name] * multiplier)
         for player in self.game.players_in_last_round:
             self.game.scoreboard.add_score(player.name, c.PARTICIPATION_POINTS * multiplier)
-        print(self.game.players_in_last_round)
         self.game.modifications = []
         #self.game.alertManager.clear()
         self.game.solar_wind_sound.fadeout(500)

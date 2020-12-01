@@ -131,6 +131,7 @@ class Planet(PhysicsObject):
         self.destroyed = True
         if hasattr(self.game.current_scene, "particles"):
             self.game.current_scene.particles.add(PlanetExplosion(self.game, self))
+        self.game.planet_explode_sound.play()
 
     def align_graphic_pose(self):
         self.graphic_pose = self.pose.copy()
