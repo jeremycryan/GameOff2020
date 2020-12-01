@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "src/game.py", line 66, in <module>
-    Game()
-  File "src/game.py", line 24, in __init__
-    self.player_label_font = pygame.font.Font(c.FONT_PATH + "/pixel_caps.ttf", 12)
-FileNotFoundError: [Errno 2] No such file or directory: '../fonts/pixel_caps.ttf'
-----------
