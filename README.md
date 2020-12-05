@@ -1,6 +1,8 @@
 # GameOff2020
 A repository for our 2020 Github Game Off entry, Launch Party!
 
+![Launch Party logo, featuring a little rocket ship and a moon with a flag](images/splash.png)
+
 ## About
 Launch Party is a multiplayer ship-programming game played via Twitch stream.
 Write some code, send it as a comment, and watch your ship take off! Everyone

@@ -249,6 +249,8 @@ class LevelScene(Scene):
             level = "wormhole"
         elif c.SMALL_PLANETS_MOD in self.game.modifications:
             level = "small"
+        elif c.EXPLODING_PLANETS in self.game.modifications:
+            level = "exploding"
         else:
             level = "default"
         self.level = level
@@ -277,6 +279,9 @@ class LevelScene(Scene):
             for i in range(4):
                 self.add_wormhole(color=i)
             self.add_planet(n=7)
+        elif level == "exploding":
+            self.spawn_waypoint(2)
+            self.add_planet(n=12)
         else:
             self.spawn_waypoint(2)
             if random.random() < 0.35:
