@@ -216,7 +216,8 @@ class Ship(PhysicsObject):
             elif char.isalnum():
                 # terminate previous number
                 if (len(number) == 1 or number[1:].isnumeric()) and \
-                (number[0].isdigit() or number[0] == '-'):
+                (number[0].isdigit() or number[0] == '-') and \
+                (number != "-"):
                     arguments.append(int(number))
                     number = ''
                 elif number != '':
